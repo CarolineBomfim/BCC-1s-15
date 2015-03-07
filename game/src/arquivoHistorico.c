@@ -1,6 +1,6 @@
 #include "include.h"
 
-void registro_evento(char *msg) {
+void registra(char *msg) {
 	FILE *ArquivoLog;
 	time_t agora = time(NULL);
 	struct tm *t = localtime(&agora);
@@ -11,7 +11,7 @@ void registro_evento(char *msg) {
 	int minuto = t->tm_min;
 	int segundo = t->tm_sec;
 
-	ArquivoLog = fopen("LogInterno.log", "a");
+	ArquivoLog = fopen("game.log", "a");
 		
 		fprintf(ArquivoLog, "%d:%d:%d %d/%d/%d - \"%s\"\n", hora, minuto, segundo, dia, mes, ano, msg);
 		fprintf(ArquivoLog, "--\n");
@@ -21,6 +21,6 @@ void registro_evento(char *msg) {
 
 void erro(char *msg){
 	printf("%s\n", msg);
-	registro_evento(msg);
+	registra(msg);
 	exit(EXIT_FAILURE);
 }

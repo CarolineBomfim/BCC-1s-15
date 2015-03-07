@@ -21,6 +21,45 @@
 #define V_MAX "V_MAX_"
 #define V_MIN "V_MIN_"
 
+// Salva o valor no arquivo de histórico para registros.
+void registra_configuracao(config *configuracao) {
+	char detalhesConfiguracao[ESPACO_MEMORIA];
+	char elementosRastreados[2][ESPACO_MEMORIA];
+	char textoAuxiliar[10*ESPACO_MEMORIA];
+	int count = 0;
+	char registro[10*ESPACO_MEMORIA];
+
+	sprintf(detalhesConfiguracao, "\nLargura: %d\nAltura: %d\nNumero de objetos rastreado: %d\nFPS: %lf\n", configuracao->largura,
+	        configuracao->altura, configuracao->num_obj, configuracao->fps);
+	
+	while(count < configuracao->num_obj) {
+		sprintf(elementosRastreados[0],
+		        "Maximo:\nH:\t%d\nS:\t%d\nV:\t%d\n", 
+		        configuracao->atributos[count].h_max, 
+		        configuracao->atributos[count].s_max,
+		        configuracao->atributos[count].v_max);
+
+		sprintf(elementosRastreados[1],
+		        "Minimo:\nH:\t%d\nS:\t%d\nV:\t%d\n", 
+		        configuracao->atributos[count].h_min,
+		        configuracao->atributos[count].s_min,
+		        configuracao->atributos[count].v_min);
+	
+		if(count == 0) {
+			sprintf(textoAuxiliar, "<==Inicio objeto rastreado==>\n%s\n%s\n<==Fim objeto rastreado==>", 
+		        elementosRastreados[0], elementosRastreados[1]);
+		} else {
+			sprintf(textoAuxiliar, "\n%s\n<==Inicio objeto rastreado==>\n%s\n%s\n<==Fim objeto rastreado==>", 
+		        textoAuxiliar, elementosRastreados[0], elementosRastreados[1]);
+		}
+		count++;
+	}
+	
+	sprintf(registro, "\n%s%s\n", detalhesConfiguracao, textoAuxiliar);
+	
+	registra(registro);
+}
+
 // Pega o valor referente ao prefixo da linha e o retorna como int
 int pegar_valor(char *valor) {
 	valor = strstr(valor, DELIMITACAO);
@@ -61,7 +100,6 @@ void montar_configuracao(config *configure, char *linha) {
 
 		if(strcmp(H_MAX, atributo) == 0) {
 			configure->atributos[pegar_atributo(prefixo, H_MAX)].h_max = pegar_valor(valor);
-			printf("%d\n", pegar_atributo(prefixo, H_MAX));
 		} else if(strcmp(H_MIN, atributo) == 0) {
 			configure->atributos[pegar_atributo(prefixo, H_MIN)].h_min = pegar_valor(valor);
 		}
@@ -100,6 +138,7 @@ config *ler_arquivo_configuracao(char *arquivo) {
 	}
 	free(linha);
 	fclose(arquivo_carregado);
+	registra_configuracao(configure);
 	return configure;
 }
 

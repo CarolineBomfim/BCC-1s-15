@@ -75,8 +75,7 @@ image newImage(ALLEGRO_BITMAP *img) {
 	imagem.positionx = alocaPosition();
 	setPositionx(imagem, imagem.width);
 	setPositiony(imagem, imagem.height);
-	int info[2];
-	getInfo(info, 2);
+	int info[] = {0, 0};
 	imagem.screen_width = info[0];
 	imagem.screen_height = info[1];
 	return imagem;

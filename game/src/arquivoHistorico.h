@@ -1,7 +1,7 @@
 #ifndef LOG_H_
 #define LOG_H_
 
-void registro_evento(char *msg);
+void registra(char *msg);
 
 void erro(char *msg);
 
