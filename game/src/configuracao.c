@@ -1,4 +1,4 @@
-#include "import.h"
+#include "include.h"
 
 #define DELIMITACAO "="
 #define ESPACO_MEMORIA 100
@@ -21,17 +21,19 @@
 #define V_MAX "V_MAX_"
 #define V_MIN "V_MIN_"
 
+// Pega o valor referente ao prefixo da linha e o retorna como int
 int pegar_valor(char *valor) {
 	valor = strstr(valor, DELIMITACAO);
 	valor = valor + strlen(DELIMITACAO);
 	return atoi(valor);
 }
-
+// Pega o valor referente ao atributo da linha e o retorna como int
 int pegar_atributo(char *prefixo, char *delimitar) {
 	prefixo = strtok(prefixo, delimitar);
 	return (atoi(prefixo)-1);
 }
 
+// Interpreta somente uma linha do arquivo de configuracção por vez e atribui os valores para as suas posições na variavel configure
 void montar_configuracao(config *configure, char *linha) {
 	char *auxiliar_prefixo[ESPACO_MEMORIA];
 	char *prefixo = memcpy( auxiliar_prefixo, linha, ESPACO_MEMORIA);
@@ -77,7 +79,7 @@ void montar_configuracao(config *configure, char *linha) {
 	}
 
 }
-
+// Faz a leitura do arquivo e chama a função montar_configuracao para interpretar linha a linha 
 config *ler_arquivo_configuracao(char *arquivo) {
 	config *configure = malloc(sizeof(config));
 	FILE *arquivo_carregado;
@@ -87,8 +89,7 @@ config *ler_arquivo_configuracao(char *arquivo) {
 	arquivo_carregado = fopen( arquivo, "r");
 	
 	if(!arquivo_carregado) {
-		printf("Falha ao carregar arquivo\n");
-		exit(EXIT_FAILURE);
+		erro("Falha ao carregar arquivo de configuracao");
 	}
 
 	while(fgets(linha, ESPACO_MEMORIA, arquivo_carregado) != NULL) {

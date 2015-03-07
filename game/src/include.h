@@ -5,7 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "configuracao.h"
+#include <time.h>
 // #include "camera.h"
+#include "arquivoHistorico.h"
+#include "configuracao.h"
+#include "imagem.h"
+#include "barraStatus.h"
 
 #endif
