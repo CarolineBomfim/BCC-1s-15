@@ -1,5 +1,6 @@
 #include "camera.h"
 
+
 void camera_converte(camera *cam, IplImage *image) {
   char *row = image->imageData;
 
@@ -20,6 +21,7 @@ void camera_converte(camera *cam, IplImage *image) {
     row += image->widthStep;
   }
 }
+
 
 camera *camera_inicializa(int i) {
   camera *cam = NULL;
@@ -46,6 +48,7 @@ camera *camera_inicializa(int i) {
   return cam;
 }
 
+
 void camera_finaliza(camera *cam) {
   camera_libera_matriz(cam, cam->quadro);
 
@@ -54,11 +57,14 @@ void camera_finaliza(camera *cam) {
   free(cam);
 }
 
+
 void camera_atualiza(camera *cam) {
   IplImage *image = cvQueryFrame(cam->capture);
 
-  camera_converte(cam, image);
+  if(image)
+    camera_converte(cam, image);
 }
+
 
 void camera_copia(camera *cam, unsigned char ***matriz, ALLEGRO_BITMAP *bitmap) {
   ALLEGRO_LOCKED_REGION *region = al_lock_bitmap(bitmap, ALLEGRO_PIXEL_FORMAT_ARGB_8888, ALLEGRO_LOCK_WRITEONLY);
@@ -85,6 +91,7 @@ void camera_copia(camera *cam, unsigned char ***matriz, ALLEGRO_BITMAP *bitmap) 
   al_unlock_bitmap(bitmap);
 }
 
+
 unsigned char ***camera_aloca_matriz(camera *cam) {
   unsigned char ***matriz = malloc(cam->altura * sizeof(unsigned char **));
 
@@ -97,6 +104,7 @@ unsigned char ***camera_aloca_matriz(camera *cam) {
 
   return matriz;
 }
+
 
 void camera_libera_matriz(camera *cam, unsigned char ***matriz) {
   for(int y = 0; y < cam->altura; y++) {

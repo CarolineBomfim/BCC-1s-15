@@ -1,0 +1,4 @@
+main
+*.o
+src/game.log
+./tmp

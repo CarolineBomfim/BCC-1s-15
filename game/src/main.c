@@ -2,6 +2,7 @@
 
 #define ARQUIVO_CONFIG "../config/configuracao.conf"
 #define ESPACO_MEMORIA 100
+
 int main() {
 	config *configuracao = ler_arquivo_configuracao(ARQUIVO_CONFIG);
 	char aux[ESPACO_MEMORIA];

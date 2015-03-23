@@ -1,7 +1,6 @@
 #include <opencv/highgui.h>
-// #include <opencv2/highgui/highgui_c.h>
-#include <allegro5/allegro.h>
 
+#include <allegro5/allegro.h>
 
 
 typedef struct {
@@ -9,7 +8,6 @@ typedef struct {
   int largura, altura;
   CvCapture *capture;
 } camera;
-
 
 
 camera *camera_inicializa(int i);
