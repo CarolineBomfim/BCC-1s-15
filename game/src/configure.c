@@ -1,4 +1,8 @@
-#include "include.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "configure.h"
+#include "logger.h"
 
 #define DELIMITACAO "="
 #define ESPACO_MEMORIA 100
@@ -57,7 +61,7 @@ void registra_configuracao(config *configuracao) {
 	
 	sprintf(registro, "\n%s%s\n", detalhesConfiguracao, textoAuxiliar);
 	
-	registra(registro);
+	logger(registro);
 }
 
 // Pega o valor referente ao prefixo da linha e o retorna como int

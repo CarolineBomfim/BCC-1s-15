@@ -12,28 +12,20 @@ typedef struct _image{
 }image;
 
 int getWidth(ALLEGRO_BITMAP *img);
-
 int getHeight(ALLEGRO_BITMAP *img);
-
 void setPositionx(image img, int newPosition);
-
 void setPositiony(image img, int newPosition);
-
 int getPositionx(image img);
-
 int getPositiony(image img);
-
 int getImageHeight(image img);
-
 int getImageWidth(image img);
-
 void draw(image img);
-
 void drawBackground(image img);
-
+int *alocaPosition();
+void liberaPosition(int *x);
 void clearImage(image img);
-
 image newImage(ALLEGRO_BITMAP *img);
+
 
 #endif
 

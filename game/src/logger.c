@@ -1,6 +1,10 @@
-#include "include.h"
-
-void registra(char *msg) {
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <time.h>
+#include "logger.h" 
+void logger(char *msg) {
 	FILE *ArquivoLog;
 	time_t agora = time(NULL);
 	struct tm *t = localtime(&agora);
@@ -21,6 +25,6 @@ void registra(char *msg) {
 
 void erro(char *msg){
 	printf("%s\n", msg);
-	registra(msg);
+	logger(msg);
 	exit(EXIT_FAILURE);
 }

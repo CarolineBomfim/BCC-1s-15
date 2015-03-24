@@ -1,4 +1,7 @@
-#include "include.h"
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_image.h>
+#include "image.h"
+#include "target.h"
 //Constructor
 target newTarget(ALLEGRO_BITMAP *img) {
 	target targetNew;

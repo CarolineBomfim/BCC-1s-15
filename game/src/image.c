@@ -1,4 +1,6 @@
-#include "include.h"
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_image.h>
+#include "image.h"
 
 int getWidth(ALLEGRO_BITMAP *img){
 	return al_get_bitmap_width(img);

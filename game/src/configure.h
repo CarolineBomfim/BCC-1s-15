@@ -16,8 +16,8 @@ typedef struct _config {
 	atributos *atributos;
 }config;
 
-config *ler_arquivo_configuracao(char *arquivo);
 
+config *ler_arquivo_configuracao(char *arquivo);
 void limpar_configuracao(config *c);
 
 #endif
