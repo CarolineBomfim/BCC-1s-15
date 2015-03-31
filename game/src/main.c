@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 	sprintf(aux, "Config: Altura= %d\n\t\t\tLargura= %d", 
 	        configuracao->altura, configuracao->largura);
 	logger(aux);
-
+	
 	global->display = al_create_display(configuracao->largura, configuracao->altura);
 	fprintf(stderr, "%s\n", "While");
 

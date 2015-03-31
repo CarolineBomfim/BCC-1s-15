@@ -1,4 +1,4 @@
 main
 *.o
-src/game.log
+game/game.log
 ./tmp
