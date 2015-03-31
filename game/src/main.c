@@ -17,6 +17,7 @@
 void gameExit(global_var *global);
 
 int main(int argc, char **argv) {
+	al_init();
 	config *configuracao = ler_arquivo_configuracao(ARQUIVO_CONFIG);
 	global_var *global = malloc(sizeof(global_var));
 	char aux[ESPACO_MEMORIA];
