@@ -2,3 +2,4 @@ main
 *.o
 game/game.log
 ./tmp
+game/AirDrums
