@@ -1,5 +1,6 @@
 main
 *.o
+.DS_Store
 game/game.log
 ./tmp
 game/AirDrums

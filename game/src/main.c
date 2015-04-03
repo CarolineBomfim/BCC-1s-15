@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_image.h>
 #include "camera.h"
 #include "global.h"
 #include "configure.h"
@@ -18,6 +19,9 @@ void gameExit(global_var *global);
 
 int main(int argc, char **argv) {
 	al_init();
+	if(!al_init_image_addon()) {
+		erro("Falha ao carregar biblioteca de images");
+	}
 	config *configuracao = ler_arquivo_configuracao(ARQUIVO_CONFIG);
 	global_var *global = malloc(sizeof(global_var));
 	char aux[ESPACO_MEMORIA];
@@ -42,10 +46,12 @@ int main(int argc, char **argv) {
 	if(!global->display) {
 		erro("Falha ao criar arquivo display");
 	}
+
 	while(TRUE) {
 		switch (initialMenu(trying)) {
 			case 0:
 				trying += startGame(argv, global);
+				fprintf(stderr, "saiu \n" );
 				break;
 
 			case 1:
@@ -60,7 +66,6 @@ int main(int argc, char **argv) {
 				gameExit(global);
 		}
 	}
-
 	return 0;
 }
 
