@@ -1,6 +1,7 @@
 # AirDrums - PI 3#
-
 ============
+Repositório criado para compartilhamento dos códigos, documentos e outros arquivos, referente ao Projeto Integrador III - 3º semestre de Bacharelado em Ciência da computação, CAS - Centro Universitário Senac, ministrado por Marcelo Hashimoto.
+
 
 ### Integrantes
 
