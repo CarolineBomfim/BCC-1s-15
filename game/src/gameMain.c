@@ -35,6 +35,7 @@ int startGame(char **argv, global_var *global) {
 		// Imrpimindo elementos na tela
 	
 		drawBackground(background);
+
 		al_flip_display();
 	}
 	return 1;
