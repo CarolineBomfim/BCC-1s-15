@@ -7,8 +7,7 @@
 
 
 
-int initialMenu(int trying) 
-{
+int initialMenu(int trying)  {
 	logger("Menu inicial.");
 	fprintf(stderr, "initialMenu\n" );
 	int option;

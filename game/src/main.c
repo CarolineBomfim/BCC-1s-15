@@ -18,12 +18,16 @@
 void gameExit(global_var *global);
 
 int main(int argc, char **argv) {
+	fprintf(stderr, "%d %s\n", argc, argv);
 	al_init();
+
 	if(!al_init_image_addon()) {
 		erro("Falha ao carregar biblioteca de images");
 	}
+
 	config *configuracao = ler_arquivo_configuracao(ARQUIVO_CONFIG);
 	global_var *global = malloc(sizeof(global_var));
+
 	char aux[ESPACO_MEMORIA];
 	int trying = 0;
 
@@ -37,6 +41,7 @@ int main(int argc, char **argv) {
 	logger(aux);
 	
 	global->display = al_create_display(configuracao->largura, configuracao->altura);
+
 	fprintf(stderr, "%s\n", "While");
 
 	if(!argv) {
@@ -51,7 +56,7 @@ int main(int argc, char **argv) {
 		switch (initialMenu(trying)) {
 			case 0:
 				trying += startGame(argv, global);
-				fprintf(stderr, "saiu \n" );
+				fprintf(stderr, "Saiu.\n" );
 				break;
 
 			case 1:
