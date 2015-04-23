@@ -4,6 +4,7 @@
 
 typedef struct _target {
 	image imagem;
+	bool show = false;
 }target;
 
 target newTarget(ALLEGRO_BITMAP *img);

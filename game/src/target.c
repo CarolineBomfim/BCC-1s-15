@@ -21,3 +21,10 @@ void setPositionTarget(target select, int x, int y){
 	setPositionx(select.imagem, x);
 	setPositiony(select.imagem, y);
 }
+
+void drawTargets(target t1, target t2, target t3, target t4) {
+	drawTarget(t1);
+	drawTarget(t2);
+	drawTarget(t3);
+	drawTarget(t4);
+}
