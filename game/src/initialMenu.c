@@ -12,7 +12,7 @@
 int initialMenu(int trying)
 {
     
-    int keyboard=1;
+   
     int pos=1;
     int posicao_menu=1;
     int testa_laco = 0;

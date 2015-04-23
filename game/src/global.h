@@ -4,6 +4,6 @@
 typedef struct _global_var {
 	ALLEGRO_DISPLAY *display;
 	char *gamer;
-	camera *camera1;
+	//camera *camera1;
 }global_var;
 #endif
