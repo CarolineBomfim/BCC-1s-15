@@ -12,10 +12,9 @@
 int initialMenu(int trying)
 {
     
-   
+   //posicao do teclado
     int pos=1;
     int posicao_menu=1;
-    int testa_laco = 0;
     int temp=0;
     int enter=0;
 
