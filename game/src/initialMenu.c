@@ -18,7 +18,7 @@ int initialMenu(int trying)
     int temp=0;
     int enter=0;
 
-    
+    //
     bool closeDisplay =false;
     logger("Menu inicial.");
     fprintf(stderr, "initialMenu\n" );
