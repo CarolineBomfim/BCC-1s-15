@@ -27,11 +27,10 @@ int main(int argc, char **argv) {
 		erro("Falha ao carregar biblioteca de images");
 	}
 
-<<<<<<< HEAD
+
 	al_init_font_addon();
 	
-=======
->>>>>>> dbc894b41e515834d506f3d4f25e1d13dfd3bb5d
+
 	config *configuracao = ler_arquivo_configuracao(ARQUIVO_CONFIG);
 	global_var *global = malloc(sizeof(global_var));
 

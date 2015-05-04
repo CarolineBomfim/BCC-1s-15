@@ -6,6 +6,7 @@
 #include "logger.h"
 #include "image.h"
 #include "global.h"
+//...
 
 
 
@@ -27,8 +28,9 @@ int initialMenu(int trying)
     // ---------------------------------------------------------------------
     //Fila de eventos
     ALLEGRO_EVENT_QUEUE *filaDeEventos = al_create_event_queue();
-    if(!filaDeEventos)
+    if(!filaDeEventos){
         erro("Falha ao criar evento");                                                                        
+    }
                                                                                                                    
     
                                                                                                             
@@ -69,7 +71,7 @@ int initialMenu(int trying)
 
 
 
-<<<<<<< HEAD
+
 while(!closeDisplay)
 {
     while(!al_is_event_queue_empty(filaDeEventos))
@@ -109,14 +111,14 @@ while(!closeDisplay)
         {
         closeDisplay = true;
         }
-=======
+
 int initialMenu(int trying)  {
 	logger("Menu inicial.");
 	fprintf(stderr, "initialMenu\n" );
 	int option;
 	scanf("%d", &option);
 	return option;
->>>>>>> dbc894b41e515834d506f3d4f25e1d13dfd3bb5d
+
 }
 
 
