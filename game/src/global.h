@@ -7,4 +7,5 @@ typedef struct _global_var {
 	char *gamer;
 	camera *camera1;
 }global_var;
+
 #endif

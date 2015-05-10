@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 #include "camera.h"
 #include "global.h"
 #include "configure.h"
@@ -24,19 +26,26 @@ int main(int argc, char **argv) {
 		erro("Falha ao carregar biblioteca de images.");
 	}
 
+<<<<<<< HEAD
 	if(!al_install_mouse()) {
 		erro("Falha ao instalar mouse.");
 	}
+=======
+
+	al_init_font_addon();
+	
+
+>>>>>>> c710fb7e06bc7d4a28dfc1ecb8eaa2836f09a91a
 	config *configuracao = ler_arquivo_configuracao(ARQUIVO_CONFIG);
 	global_var *global = malloc(sizeof(global_var));
 
 	char aux[ESPACO_MEMORIA];
 	int trying = 0;
 
-	global->camera1 = camera_inicializa(0);
+	//global->camera1 = camera_inicializa(0);
 
-	sprintf(aux, "Camera: Altura= %d\n\t\t\tLargura= %d", 
-	        global->camera1->altura, global->camera1->largura);
+	//sprintf(aux, "Camera: Altura= %d\n\t\t\tLargura= %d", 
+	      //  global->camera1->altura, global->camera1->largura);
 	logger(aux);
 	sprintf(aux, "Config: Altura= %d\n\t\t\tLargura= %d", 
 	        configuracao->altura, configuracao->largura);
@@ -48,6 +57,8 @@ int main(int argc, char **argv) {
 	if(!global->event_queue) {
 		erro("Falha ao criar fila de eventos");
 	}
+
+     
 
 	if(!argv) {
 		argv[1] = "-n";
@@ -74,6 +85,7 @@ int main(int argc, char **argv) {
 
 			default:
 				gameExit(global);
+
 		}
 	}
 	return 0;
@@ -81,8 +93,10 @@ int main(int argc, char **argv) {
 
 void gameExit(global_var *global) {
 	al_destroy_display(global->display);
-	camera_finaliza(global->camera1);
+	//camera_finaliza(global->camera1);
 	free(global);
 	logger("Sair do jogo");
 	exit(EXIT_SUCCESS);
 }
+
+
