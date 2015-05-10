@@ -2,9 +2,12 @@
 #include <allegro5/allegro_image.h>
 #include "image.h"
 #include "target.h"
+
+#define FALSE 0
 //Constructor
 target newTarget(ALLEGRO_BITMAP *img) {
 	target targetNew;
+	targetNew.show = FALSE;
 	targetNew.imagem = newImage(img);
 	return targetNew;
 }

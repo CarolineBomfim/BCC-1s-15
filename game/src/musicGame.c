@@ -4,7 +4,7 @@
 #include "logger.h"
 
 #define TAMANHO_LINHA 4
-#define TAMANHO_BLOCO 10
+#define TAMANHO_BLOCO 4
 
 music alocaMusic(int total);
 

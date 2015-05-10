@@ -7,8 +7,10 @@
 #include "image.h"
 #include "cursor.h"
 #include "target.h"
+#include "musicGame.h"
 
 #define TRUE 1
+#define FALSE 0
 
 char *testing_mode = "-t";
 char *debug_mode = "-d";
@@ -19,7 +21,7 @@ int startGame(char **argv, global_var *global) {
 	target alvoRosa 			= newTarget(al_load_bitmap("res/img/alvo_rosa.png"));
 	target alvoVerde 			= newTarget(al_load_bitmap("res/img/alvo_verde.png"));
 	target alvoVermelho 	= newTarget(al_load_bitmap("res/img/alvo_vermelho.png"));
-	int ***notes 					= readFileMusic("res/song/bang-your-head-notes.txt");
+	music music 					= readFileMusic("res/song/bang-your-head-notes.txt");
 	int laco = 10, count 	= 0;
 
 	int gameMode = 0;
@@ -32,7 +34,7 @@ int startGame(char **argv, global_var *global) {
 	} else {
 		logger("Jogo iniciado em modo padrão.");
 	}
-
+	int bloco = 0;
 	while(TRUE){
 		// gameMode representa como o jogo será executado
 		// gameMode=0 será executado de forma padrão, apenas com registros de rotina.
@@ -40,15 +42,42 @@ int startGame(char **argv, global_var *global) {
 		// gameMode=2 será executado como debug, todos os eventos serão registrados e a imagem de
 		// background não será mostrada
 	
+		if(count == 10) {
+			alvoAzul.show 		= FALSE;
+			alvoRosa.show 		= FALSE;
+			alvoVerde.show 		= FALSE;
+			alvoVermelho.show = FALSE;
+			count = 0;
+		}
 
-		for( int i = 0; i < sizeof(notes[bloco]); ++i) {
-			for(int j = 0; j < sizeof(notes[bloco][i]); ++j) {
+		for( int i = 0; i < ((int)sizeof(music.music[bloco])); ++i) {
+			for(int j = 0; j < ((int)sizeof(music.music[bloco][i])); ++j) {
+				if(music.music[bloco][i][j] == 1 && j == 0) {
+					alvoAzul.show = TRUE;
+				} else {
+					alvoAzul.show = FALSE;
+				}
+				if(music.music[bloco][i][j] == 1 && j == 1) {
+					alvoRosa.show = TRUE;
+				} else {
+					alvoRosa.show = FALSE;
+				}
+				if(music.music[bloco][i][j] == 1 && j == 2) {
+					alvoVerde.show = TRUE;
+				} else {
+					alvoVerde.show = FALSE;
+				}
+				if(music.music[bloco][i][j] == 1 && j == 3) {
+					alvoVermelho.show = TRUE;
+				} else {
+					alvoVermelho.show = FALSE;
+				}
 			}
 		}
 
 		// Imrpimindo elementos na tela
 		drawBackground(background);
-		drawTargets(laco, notes, alvoAzul, alvoRosa, alvoVermelho, alvoVerde);
+		drawTargets(alvoAzul, alvoRosa, alvoVermelho, alvoVerde);
 		al_flip_display();
 		count++;
 	}

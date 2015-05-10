@@ -36,12 +36,13 @@ int getImageWidth(image img) {
 
 void draw(image img) {
 	int x = 0, y = 0;
+	// Evita que a imagem encoste na lateral da tela
 	if(getPositionx(img) <= (img.screen_width - img.width)) {
 		x = getPositionx(img);
 	} else {
 		x = img.screen_width - img.width;
 	}
-
+	// Evita que a imagem encoste na parte superior ou inferor da tela
 	if(getPositiony(img) <= (img.screen_height - img.height)) {
 		y = getPositiony(img);
 	} else {

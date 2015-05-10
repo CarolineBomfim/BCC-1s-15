@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
-#include "logger.h" 
+
 void logger(char *msg) {
 	FILE *ArquivoLog;
 	time_t agora = time(NULL);
@@ -16,9 +16,8 @@ void logger(char *msg) {
 	int segundo = t->tm_sec;
 
 	ArquivoLog = fopen("game.log", "a");
-		
-		fprintf(ArquivoLog, "%d:%d:%d %d/%d/%d - \"%s\"\n", hora, minuto, segundo, dia, mes, ano, msg);
-		fprintf(ArquivoLog, "--\n");
+		// Registra a mensagem marcando data e hora com a precisão de segundos 
+		fprintf(ArquivoLog, "%d:%d:%d %d/%d/%d - \"%s\"\n--\n", hora, minuto, segundo, dia, mes, ano, msg);
 
 	fclose(ArquivoLog);
 }

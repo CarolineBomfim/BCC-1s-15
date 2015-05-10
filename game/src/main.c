@@ -18,13 +18,15 @@
 void gameExit(global_var *global);
 
 int main(int argc, char **argv) {
-	fprintf(stderr, "%d %s\n", argc, argv);
 	al_init();
 
 	if(!al_init_image_addon()) {
-		erro("Falha ao carregar biblioteca de images");
+		erro("Falha ao carregar biblioteca de images.");
 	}
 
+	if(!al_install_mouse()) {
+		erro("Falha ao instalar mouse.");
+	}
 	config *configuracao = ler_arquivo_configuracao(ARQUIVO_CONFIG);
 	global_var *global = malloc(sizeof(global_var));
 
@@ -41,8 +43,11 @@ int main(int argc, char **argv) {
 	logger(aux);
 	
 	global->display = al_create_display(configuracao->largura, configuracao->altura);
+	global->event_queue = al_create_event_queue();
 
-	fprintf(stderr, "%s\n", "While");
+	if(!global->event_queue) {
+		erro("Falha ao criar fila de eventos");
+	}
 
 	if(!argv) {
 		argv[1] = "-n";
@@ -53,7 +58,7 @@ int main(int argc, char **argv) {
 	}
 
 	while(TRUE) {
-		switch (initialMenu(trying)) {
+		switch (initialMenu(trying, global)) {
 			case 0:
 				trying += startGame(argv, global);
 				fprintf(stderr, "Saiu.\n" );
