@@ -30,7 +30,7 @@ int startGame(char **argv, global_var *global) {
 	target alvoVermelho 	= newTarget(al_load_bitmap("res/img/alvo_vermelho.png"));
 
 	// Carregando musica e as notas
-	audio currentAudio 	= newAudio(al_load_audio_stream("res/song/bang-your-head.ogg", 4, 1024));
+	// audio currentAudio 	= newAudio(al_load_audio_stream("res/song/bang-your-head.ogg", 4, 1024));
 	// music music_notes 					= readFileMusic("res/song/bang-your-head.notes");
 	// Organizando posições do alvo, o diametro de cada alvo é de 95px
 	setPositionTarget(alvoAzul, 15, 0);
