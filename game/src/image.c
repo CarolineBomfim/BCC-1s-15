@@ -1,7 +1,7 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include "image.h"
-
+#include "logger.h"
 int getWidth(ALLEGRO_BITMAP *img){
 	return al_get_bitmap_width(img);
 }
@@ -35,20 +35,7 @@ int getImageWidth(image img) {
 }
 
 void draw(image img) {
-	int x = 0, y = 0;
-	// Evita que a imagem encoste na lateral da tela
-	if(getPositionx(img) <= (img.screen_width - img.width)) {
-		x = getPositionx(img);
-	} else {
-		x = img.screen_width - img.width;
-	}
-	// Evita que a imagem encoste na parte superior ou inferor da tela
-	if(getPositiony(img) <= (img.screen_height - img.height)) {
-		y = getPositiony(img);
-	} else {
-		y = img.screen_height - img.height;
-	}
-	al_draw_bitmap(img.image, x, y, 0);
+	al_draw_bitmap(img.image, getPositionx(img), getPositiony(img), 0);
 }
 
 void drawBackground(image img) {
@@ -70,6 +57,9 @@ void clearImage(image img) {
 }
 
 image newImage(ALLEGRO_BITMAP *img) {
+	if(!img) {
+		erro("Erro ao carregar imagem.");
+	}
 	image imagem;
 	imagem.image = img;
 	imagem.width = getWidth(img);
@@ -78,8 +68,5 @@ image newImage(ALLEGRO_BITMAP *img) {
 	imagem.positionx = alocaPosition();
 	setPositionx(imagem, imagem.width);
 	setPositiony(imagem, imagem.height);
-	int info[] = {0, 0};
-	imagem.screen_width = info[0];
-	imagem.screen_height = info[1];
 	return imagem;
 }

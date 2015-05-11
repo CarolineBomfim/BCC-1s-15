@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
 	if(!global->event_queue) {
 		erro("Falha ao criar fila de eventos");
 	}
-
+	global->configure = configuracao;
 	if(!argv) {
 		argv[1] = "-n";
 	}
@@ -66,10 +66,6 @@ int main(int argc, char **argv) {
 
 			case 1:
 				showRanking();
-				break;
-
-			case 2:
-				showExemple();
 				break;
 
 			default:
