@@ -9,8 +9,11 @@ typedef struct _target {
 
 target newTarget(ALLEGRO_BITMAP *img);
 void clearTarget(target this);
-void drawTarget(target select);
-void setPositionTarget(target select, int x, int y);
+void drawTarget(target this);
+int getPositionTargetx(target this);
+int getPositionTargety(target this);
+void setPositionTargety(target this, int y);
+void setPositionTarget(target this, int x, int y);
 void drawTargets(target t1, target t2, target t3, target t4);
 
 #endif

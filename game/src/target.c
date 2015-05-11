@@ -16,13 +16,27 @@ void clearTarget(target this) {
 	clearImage(this.imagem);
 }
 
-void drawTarget(target select) {
-	draw(select.imagem);
+void drawTarget(target this) {
+	if(this.show != FALSE) {
+		draw(this.imagem);
+	}
 }
 
-void setPositionTarget(target select, int x, int y){
-	setPositionx(select.imagem, x);
-	setPositiony(select.imagem, y);
+int getPositionTargetx(target this) {
+	return getPositionx(this.imagem);
+}
+
+int getPositionTargety(target this) {
+	return getPositiony(this.imagem);
+}
+
+void setPositionTargety(target this, int y) {
+	setPositiony(this.imagem, y);
+}
+
+void setPositionTarget(target this, int x, int y){
+	setPositionx(this.imagem, x);
+	setPositiony(this.imagem, y);
 }
 
 void drawTargets(target t1, target t2, target t3, target t4) {
