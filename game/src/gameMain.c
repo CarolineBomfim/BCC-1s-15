@@ -60,7 +60,8 @@ int startGame(char **argv, global_var *global) {
 	}
 	
 	// Iniciando audio
-	play(currentAudio);
+	// play(currentAudio);
+	erro("Proosit game no initialize.");
 	while(TRUE){
 		// gameMode representa como o jogo será executado
 		// gameMode=0 será executado de forma padrão, apenas com registros de rotina.
