@@ -19,11 +19,19 @@ void setCursorPositionX(cursor this, int x) {
 }
 
 void setCursorPositionY(cursor this, int y) {
-	setPositiony(this.imagem, y);
+	if(y > getImageHeight(this.imagem)) {
+		setPositiony(this.imagem, getImageHeight(this.imagem));
+	} else {
+		setPositiony(this.imagem, y);
+	}
 }
 
 void setCursorPosition(cursor this, int x, int y) {
-	setPositionx(this.imagem, x);
-	setPositiony(this.imagem, y);
+	setCursorPositionX(this, x);
+	setCursorPositionY(this, y);
 }
 
+void setCursorsPosition(cursor c1, cursor c2, int **positions){
+	setCursorPosition(c1, positions[0][0], positions[0][1]);
+	setCursorPosition(c2, positions[1][0], positions[1][1]);
+}

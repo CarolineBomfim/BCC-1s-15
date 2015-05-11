@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
-#include "camera.h"
 #include "logger.h"
 #include "global.h"
 #include "image.h"

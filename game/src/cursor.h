@@ -7,8 +7,6 @@ typedef struct _cursor{
 
 cursor newCursor(ALLEGRO_BITMAP *img);
 void drawCursor(cursor this);
-void setCursorPositionX(cursor this, int x);
-void setCursorPositionY(cursor this, int y);
-void setCursorPosition(cursor this, int x, int y);
+void setCursorsPosition(cursor c1, cursor c2, int **positions);
 
 #endif

@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
-#include "camera.h"
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #include "global.h"
-#include "configure.h"
 #include "gameMain.h"
 #include "ranking.h"
 #include "initialMenu.h"
@@ -24,9 +24,18 @@ int main(int argc, char **argv) {
 		erro("Falha ao carregar biblioteca de images.");
 	}
 
+	if(!al_init_acodec_addon()) {
+		erro("Falha ao iniciar os codecs de audio");
+	}
+
 	if(!al_install_mouse()) {
 		erro("Falha ao instalar mouse.");
 	}
+
+	if(!al_install_audio()) {
+		erro("Falha ao instalar recursos de audio.");
+	}
+
 	config *configuracao = ler_arquivo_configuracao(ARQUIVO_CONFIG);
 	global_var *global = malloc(sizeof(global_var));
 

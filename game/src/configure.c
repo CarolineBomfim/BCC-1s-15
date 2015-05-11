@@ -13,7 +13,10 @@
 
 // Número de atualizações da tela por segundo
 #define FPS "FRAMES_POR_SEGUNDO"
+#define CASA_DECIMAL "CASA_DECIMAL"
 
+// Altura limite para a a execução do evento
+#define LIMIT_ACTION "LIMIT_ACTION"
 // Número de objetos a serem rastreados
 #define NUM_OBJ "NUMERO_DE_OBJETOS"
 
@@ -90,10 +93,15 @@ void montar_configuracao(config *configure, char *linha) {
 
 	} else if(strcmp(prefixo, ALTURA) == 0) {
 		configure->altura = pegar_valor(valor);
-
+	} else if(strcmp(prefixo, CASA_DECIMAL) == 0) {
+		configure->valor_decimal = pegar_valor(valor);
+	
 	} else if(strcmp(prefixo, FPS) == 0) {
 		configure->fps = pegar_valor(valor);
 
+	} else if(strcmp(prefixo, LIMIT_ACTION) == 0) {
+		configure->limit_action = pegar_valor(valor);
+		
 	} else if(strcmp(prefixo, NUM_OBJ) == 0) {
 		configure->num_obj = pegar_valor(valor);
 		configure->atributos = malloc(configure->num_obj * sizeof(atributos));
