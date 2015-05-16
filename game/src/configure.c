@@ -74,6 +74,7 @@ int pegar_valor(char *valor) {
 	return atoi(valor);
 }
 // Pega o valor referente ao atributo da linha e o retorna como int
+// Usado para os casos de h_max e h_min, além dos demais equivalentes
 int pegar_atributo(char *prefixo, char *delimitar) {
 	prefixo = strtok(prefixo, delimitar);
 	return (atoi(prefixo)-1);
@@ -111,6 +112,7 @@ void montar_configuracao(config *configure, char *linha) {
 		char *atributo = memcpy( auxiliar_atributo, prefixo, strlen(prefixo) - 1);
 
 		if(strcmp(H_MAX, atributo) == 0) {
+			// Associa cada elemento do hsv ao respectivo da configuração, por exemplo, H_MAX_1 será associado ao index 0 do vetor
 			configure->atributos[pegar_atributo(prefixo, H_MAX)].h_max = pegar_valor(valor);
 		} else if(strcmp(H_MIN, atributo) == 0) {
 			configure->atributos[pegar_atributo(prefixo, H_MIN)].h_min = pegar_valor(valor);
@@ -145,6 +147,7 @@ config *ler_arquivo_configuracao(char *arquivo) {
 	while(fgets(linha, ESPACO_MEMORIA, arquivo_carregado) != NULL) {
 		if( linha[0] != '#' ) {
 			montar_configuracao(configure, memcpy( nova_linha, linha, strlen(linha) - 1));
+			// memset está limpando o espaço de memoria para que não haja lixo entre uma linha a outra
 			memset(nova_linha, 0, ESPACO_MEMORIA);
 		}
 	}

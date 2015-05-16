@@ -4,6 +4,7 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
+
 #include "global.h"
 #include "gameMain.h"
 #include "ranking.h"
@@ -11,6 +12,7 @@
 #include "logger.h"
 
 #define ARQUIVO_CONFIG "config/configuracao.conf"
+#define RANKING_FILE "res/ranking.txt"
 #define ESPACO_MEMORIA 100
 #define FALSE 0
 #define TRUE 1
@@ -50,10 +52,14 @@ int main(int argc, char **argv) {
 	sprintf(aux, "Config: Altura= %d\n\t\t\tLargura= %d", 
 	        configuracao->altura, configuracao->largura);
 	logger(aux);
-	
+
 	global->display = al_create_display(configuracao->largura, configuracao->altura);
 	global->event_queue = al_create_event_queue();
-
+	global->ranking = ler_ranking(RANKING_FILE);
+	while(global->ranking[trying].record != NULL) {
+		printf("%s\n",global->ranking[trying].name);
+		trying++;
+	}
 	if(!global->event_queue) {
 		erro("Falha ao criar fila de eventos");
 	}
@@ -72,11 +78,11 @@ int main(int argc, char **argv) {
 				trying += startGame(argv, global);
 				fprintf(stderr, "Saiu.\n" );
 				break;
-
 			case 1:
-				showRanking();
+				if(global->ranking) {
+					showRanking(global->ranking);
+				}
 				break;
-
 			default:
 				gameExit(global);
 		}
@@ -87,6 +93,7 @@ int main(int argc, char **argv) {
 void gameExit(global_var *global) {
 	al_destroy_display(global->display);
 	camera_finaliza(global->camera1);
+	clearRank(global->ranking, RANKING_FILE);
 	free(global);
 	logger("Sair do jogo");
 	exit(EXIT_SUCCESS);
