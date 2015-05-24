@@ -2,8 +2,9 @@
 #include <allegro5/allegro_image.h>
 #include "image.h"
 #include "cursor.h"
+#include "global.h"
 
-// Constructor
+// Construtor
 cursor newCursor(ALLEGRO_BITMAP *img) {
 	cursor newCursor;
 	newCursor.imagem = newImage(img);
@@ -32,6 +33,6 @@ void setCursorPosition(cursor this, int x, int y) {
 }
 
 void setCursorsPosition(cursor c1, cursor c2, int **positions){
-	setCursorPosition(c1, positions[0][0], positions[0][1]);
-	setCursorPosition(c2, positions[1][0], positions[1][1]);
+	setCursorPosition(c1, positions[CURSOR_DIREITO][POSITION_X], positions[CURSOR_DIREITO][POSITION_Y]);
+	setCursorPosition(c2, positions[CURSOR_ESQUERDO][POSITION_X], positions[CURSOR_ESQUERDO][POSITION_Y]);
 }

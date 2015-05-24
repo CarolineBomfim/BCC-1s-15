@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c99 
+CFLAGS = -std=c99 -W -Wall -pedantic 
 EXEC = AirDrums
 SRC = $(wildcard src/*.c)
 MAIN = src/main.c

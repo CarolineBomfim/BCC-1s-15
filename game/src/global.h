@@ -14,4 +14,30 @@ typedef struct _global_var {
 	int gameMode;
 } global_var;
 
+#define TRUE 1
+#define FALSE 0
+
+#define NORMAL_MODE 0
+#define TESTING_MODE 1
+#define DEBUG_MODE 2
+
+#define ARQUIVO_CONFIG "config/configuracao.conf"
+#define RANKING_FILE "res/ranking.txt"
+
+#define CURSOR_DIREITO 0
+#define CURSOR_ESQUERDO 1
+
+#define POSITION_X 0
+#define POSITION_Y 1
+
+// Valores de rgb
+#define RED   0
+#define GREEN 1
+#define BLUE  2
+
+// Valores de hsv
+#define HUE        0
+#define SATURATION 1
+#define LIGHTNESS  2
+
 #endif

@@ -12,22 +12,25 @@
 #include "track.h"
 #include "musicGame.h"
 
-#define TRUE 1
-#define FALSE 0
-
-char *testing_mode = "-t";
-char *debug_mode = "-d";
-
-int startGame(char **argv, global_var *global) {
+int startGame(global_var *global) {
 	logger("Iniciar jogo");
+
 	// Criando timer com 1 segundo espaçamento entre um evento e o outro. 
 	ALLEGRO_TIMER *timer  = al_create_timer(1.0);
 
-	image background 			= newImage(al_load_bitmap("res/img/background_image.png"));
-	target alvoAzul 			= newTarget(al_load_bitmap("res/img/alvo_azul.png"));
-	target alvoRosa 			= newTarget(al_load_bitmap("res/img/alvo_rosa.png"));
-	target alvoVerde 			= newTarget(al_load_bitmap("res/img/alvo_verde.png"));
-	target alvoVermelho 	= newTarget(al_load_bitmap("res/img/alvo_vermelho.png"));
+	int **positions = malloc(global->configure->num_obj*sizeof(int *));
+	
+	for (int i = 0; i < global->configure->num_obj; ++i) {
+		positions[i] = malloc(2*sizeof(int));
+	}
+
+	image background 				= newImage(al_load_bitmap("res/img/background_image.png"));
+	target alvoAzul 				= newTarget(al_load_bitmap("res/img/alvo_azul.png"));
+	target alvoRosa 				= newTarget(al_load_bitmap("res/img/alvo_rosa.png"));
+	target alvoVerde 				= newTarget(al_load_bitmap("res/img/alvo_verde.png"));
+	target alvoVermelho 		= newTarget(al_load_bitmap("res/img/alvo_vermelho.png"));
+	ALLEGRO_BITMAP *buffer 	= al_get_backbuffer(global->display);
+	ALLEGRO_BITMAP *preview	= al_create_sub_bitmap(buffer, 0, 0, global->configure->largura, global->configure->altura);
 
 	// Carregando musica e as notas
 	// audio currentAudio 	= newAudio(al_load_audio_stream("res/song/bang-your-head.ogg", 4, 1024));
@@ -48,20 +51,17 @@ int startGame(char **argv, global_var *global) {
 	cursor left = newCursor(al_load_bitmap("res/img/cursor_left.png"));
 	cursor right = newCursor(al_load_bitmap("res/img/cursor_right.png"));	
 
-	global->gameMode = 0;
-	if (argv[1] == testing_mode) {
+	if (global->gameMode == TESTING_MODE) {
 		logger("Jogo iniciado em modo de teste. Todas as atividades serão registradas.");
-		global->gameMode = 1;
-	} else if(argv[1] == debug_mode) {
+	} else if(global->gameMode == DEBUG_MODE) {
 		logger("Jogo iniciado em modo de debug. Todas as atividades serão registradas.");
-		global->gameMode = 2;
 	} else {
 		logger("Jogo iniciado em modo padrão.");
 	}
-	
+
 	// Iniciando audio
 	// play(currentAudio);
-	erro("Proosit game no initialize.");
+
 	while(TRUE){
 		// gameMode representa como o jogo será executado
 		// gameMode=0 será executado de forma padrão, apenas com registros de rotina.
@@ -70,12 +70,14 @@ int startGame(char **argv, global_var *global) {
 		// background não será mostrada
 
 		// Executa o rastreamento e retorna a posição dos objetos rastrados
-		setCursorsPosition(right, left, track(global));
-
+		track(global, positions);
+		setCursorsPosition(right, left, positions);
 
 		// Imrpimindo elementos na tela
-		if(global->gameMode != 2) {
+		if(global->gameMode == NORMAL_MODE) {
 			drawBackground(background);
+		} else {
+			camera_copia(global->camera1, global->camera1->quadro, preview);
 		}
 		drawTargets(alvoAzul, alvoRosa, alvoVermelho, alvoVerde);
 		drawTargets(alvoAzul2, alvoRosa2, alvoVermelho2, alvoVerde2);
@@ -83,6 +85,11 @@ int startGame(char **argv, global_var *global) {
 		drawCursor(right);
 		al_flip_display();
 	}
+
+	for (int i = 0; i < global->configure->num_obj; ++i) {
+		free(positions[i]);
+	}
+	free(positions);
 	return 1;
 }
 
