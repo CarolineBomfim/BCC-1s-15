@@ -34,6 +34,9 @@ int main(int argc, char **argv) {
 		erro("Falha ao instalar recursos de audio.");
 	}
 
+	if(!al_reserve_samples(1)) {
+		erro("Falha ao reservar canal de audio");
+	}
 	config *configuracao = ler_arquivo_configuracao(ARQUIVO_CONFIG);
 	global_var *global = malloc(sizeof(global_var));
 

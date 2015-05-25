@@ -8,7 +8,6 @@
 #include "image.h"
 #include "cursor.h"
 #include "target.h"
-#include "audio.h"
 #include "track.h"
 #include "musicGame.h"
 
@@ -24,16 +23,23 @@ int startGame(global_var *global) {
 		positions[i] = malloc(2*sizeof(int));
 	}
 
-	image background 				= newImage(al_load_bitmap("res/img/background_image.png"));
-	target alvoAzul 				= newTarget(al_load_bitmap("res/img/alvo_azul.png"));
-	target alvoRosa 				= newTarget(al_load_bitmap("res/img/alvo_rosa.png"));
-	target alvoVerde 				= newTarget(al_load_bitmap("res/img/alvo_verde.png"));
-	target alvoVermelho 		= newTarget(al_load_bitmap("res/img/alvo_vermelho.png"));
-	ALLEGRO_BITMAP *buffer 	= al_get_backbuffer(global->display);
-	ALLEGRO_BITMAP *preview	= al_create_sub_bitmap(buffer, 0, 0, global->configure->largura, global->configure->altura);
-
+	image background 					 = newImage(al_load_bitmap("res/img/background_image.png"));
+	target alvoAzul 					 = newTarget(al_load_bitmap("res/img/alvo_azul.png"));
+	target alvoRosa 					 = newTarget(al_load_bitmap("res/img/alvo_rosa.png"));
+	target alvoVerde 					 = newTarget(al_load_bitmap("res/img/alvo_verde.png"));
+	target alvoVermelho 			 = newTarget(al_load_bitmap("res/img/alvo_vermelho.png"));
+	ALLEGRO_BITMAP *buffer 		 = al_get_backbuffer(global->display);
+	ALLEGRO_BITMAP *preview		 = al_create_sub_bitmap(buffer, 0, 0, global->configure->largura, global->configure->altura);
+	ALLEGRO_SAMPLE_INSTANCE *sample;
+	ALLEGRO_SAMPLE *sample_data= al_load_sample("res/song/bang-your-head.ogg");
+	if(!sample_data) {
+		erro("Erro ao carregar musica.");
+	}
+	sample = al_create_sample_instance(NULL);
+	if (!al_set_sample(sample, sample_data)) {
+		erro("Erro ao associar a musica a instancia.");
+	}
 	// Carregando musica e as notas
-	// audio currentAudio 	= newAudio(al_load_audio_stream("res/song/bang-your-head.ogg", 4, 1024));
 	// music music_notes 					= readFileMusic("res/song/bang-your-head.notes");
 	// Organizando posições do alvo, o diametro de cada alvo é de 95px
 	setPositionTarget(alvoAzul, 15, 0);
@@ -51,6 +57,9 @@ int startGame(global_var *global) {
 	cursor left = newCursor(al_load_bitmap("res/img/cursor_left.png"));
 	cursor right = newCursor(al_load_bitmap("res/img/cursor_right.png"));	
 
+	setCursorPosition(right, global->configure->largura/2, global->configure->altura/2);
+	setCursorPosition(left, global->configure->largura/2, global->configure->altura/2);
+
 	if (global->gameMode == TESTING_MODE) {
 		logger("Jogo iniciado em modo de teste. Todas as atividades serão registradas.");
 	} else if(global->gameMode == DEBUG_MODE) {
@@ -60,8 +69,8 @@ int startGame(global_var *global) {
 	}
 
 	// Iniciando audio
-	// play(currentAudio);
-
+	al_set_sample_instance_playmode(sample, ALLEGRO_PLAYMODE_LOOP);
+	al_play_sample(sample_data, 1.0, 0.0,1.0,ALLEGRO_PLAYMODE_LOOP,NULL);
 	while(TRUE){
 		// gameMode representa como o jogo será executado
 		// gameMode=0 será executado de forma padrão, apenas com registros de rotina.
@@ -81,11 +90,13 @@ int startGame(global_var *global) {
 		}
 		drawTargets(alvoAzul, alvoRosa, alvoVermelho, alvoVerde);
 		drawTargets(alvoAzul2, alvoRosa2, alvoVermelho2, alvoVerde2);
+		
 		drawCursor(left);
 		drawCursor(right);
+	
 		al_flip_display();
 	}
-
+	al_destroy_audio_stream(sample);
 	for (int i = 0; i < global->configure->num_obj; ++i) {
 		free(positions[i]);
 	}
@@ -97,42 +108,3 @@ void showExemple(){
 	logger("Tutorial.");
 	fprintf(stderr, "Tutorial\n");
 }
-
-
-/**
-	
-		if(count == 10) {
-			alvoAzul.show 		= FALSE;
-			alvoRosa.show 		= FALSE;
-			alvoVerde.show 		= FALSE;
-			alvoVermelho.show = FALSE;
-			count = 0;
-		}
-
-		for( int i = 0; i < ((int)sizeof(music.music[bloco])); ++i) {
-			for(int j = 0; j < ((int)sizeof(music.music[bloco][i])); ++j) {
-				if(music.music[bloco][i][j] == 1 && j == 0) {
-					alvoAzul.show = TRUE;
-				} else {
-					alvoAzul.show = FALSE;
-				}
-				if(music.music[bloco][i][j] == 1 && j == 1) {
-					alvoRosa.show = TRUE;
-				} else {
-					alvoRosa.show = FALSE;
-				}
-				if(music.music[bloco][i][j] == 1 && j == 2) {
-					alvoVerde.show = TRUE;
-				} else {
-					alvoVerde.show = FALSE;
-				}
-				if(music.music[bloco][i][j] == 1 && j == 3) {
-					alvoVermelho.show = TRUE;
-				} else {
-					alvoVermelho.show = FALSE;
-				}
-			}
-		}
-
-
-**/
