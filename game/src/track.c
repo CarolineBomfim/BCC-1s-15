@@ -96,13 +96,13 @@ void track(global_var *global, int **positions) {
 			
 			for(int k = 0; k < global->configure->num_obj; k++) {
 				// Aprimorar valores para o ambiente adequado
-				printf("(%d) %d %d %d %d %d %d\n", k,
-							attr[k].h_min < hsv[i][j][HUE],
-							hsv[i][j][HUE] < attr[k].h_max,
-							attr[k].s_min < hsv[i][j][SATURATION],
-							hsv[i][j][SATURATION] < attr[k].s_max,
-							attr[k].v_min < hsv[i][j][LIGHTNESS], 
-							hsv[i][j][LIGHTNESS] < attr[k].v_max );
+				// printf("(%d) %d %d %d %d %d %d\n", k,
+				// 			attr[k].h_min < hsv[i][j][HUE],
+				// 			hsv[i][j][HUE] < attr[k].h_max,
+				// 			attr[k].s_min < hsv[i][j][SATURATION],
+				// 			hsv[i][j][SATURATION] < attr[k].s_max,
+				// 			attr[k].v_min < hsv[i][j][LIGHTNESS], 
+				// 			hsv[i][j][LIGHTNESS] < attr[k].v_max );
 				if(
 				   attr[k].h_min < hsv[i][j][HUE]
 				   && hsv[i][j][HUE] < attr[k].h_max
@@ -111,12 +111,12 @@ void track(global_var *global, int **positions) {
 				   && attr[k].v_min < hsv[i][j][LIGHTNESS] 
 				   && hsv[i][j][LIGHTNESS] < attr[k].v_max
 				  ) {
-					if(i < altura/2) {
+					
 						// Pegando a centroide de cada um dos pontos
 						marks[k][POSITION_X] += j;
 						marks[k][POSITION_Y] += i;
 						complemento++;
-					}
+					
 				}
 			}
 			free(hsv[i][j]);

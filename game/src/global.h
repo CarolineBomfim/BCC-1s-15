@@ -24,8 +24,8 @@ typedef struct _global_var {
 #define ARQUIVO_CONFIG "config/configuracao.conf"
 #define RANKING_FILE "res/ranking.txt"
 
-#define CURSOR_DIREITO 0
-#define CURSOR_ESQUERDO 1
+#define CURSOR_ESQUERDO 0
+#define CURSOR_DIREITO 1
 
 #define POSITION_X 0
 #define POSITION_Y 1
