@@ -17,8 +17,12 @@
 
 // Altura limite para a a execução do evento
 #define LIMIT_ACTION "LIMIT_ACTION"
+
 // Número de objetos a serem rastreados
 #define NUM_OBJ "NUMERO_DE_OBJETOS"
+
+// Camera que deve ser carregada
+#define CAM "CAM"
 
 // Atributos dos objetos
 #define H_MAX "H_MAX_"
@@ -36,8 +40,8 @@ void registra_configuracao(config *configuracao) {
 	int count = 0;
 	char registro[10*ESPACO_MEMORIA];
 
-	sprintf(detalhesConfiguracao, "\nLargura: %d\nAltura: %d\nNumero de objetos rastreado: %d\nFPS: %lf\n", configuracao->largura,
-	        configuracao->altura, configuracao->num_obj, configuracao->fps);
+	sprintf(detalhesConfiguracao, "\nCamera\nLargura: %d\nAltura: %d\nNumero de objetos rastreado: %d\nFPS: %lf\n",
+	        configuracao->cam, configuracao->largura, configuracao->altura, configuracao->num_obj, configuracao->fps);
 	
 	while(count < configuracao->num_obj) {
 		sprintf(elementosRastreados[0],
@@ -94,15 +98,19 @@ void montar_configuracao(config *configure, char *linha) {
 
 	} else if(strcmp(prefixo, ALTURA) == 0) {
 		configure->altura = pegar_valor(valor);
+
 	} else if(strcmp(prefixo, CASA_DECIMAL) == 0) {
 		configure->valor_decimal = pegar_valor(valor);
-	
+
 	} else if(strcmp(prefixo, FPS) == 0) {
 		configure->fps = pegar_valor(valor);
 
+	} else if(strcmp(prefixo, CAM) == 0) {
+		configure->cam = pegar_valor(valor);
+
 	} else if(strcmp(prefixo, LIMIT_ACTION) == 0) {
 		configure->limit_action = pegar_valor(valor);
-		
+
 	} else if(strcmp(prefixo, NUM_OBJ) == 0) {
 		configure->num_obj = pegar_valor(valor);
 		configure->atributos = malloc(configure->num_obj * sizeof(atributos));
@@ -117,11 +125,13 @@ void montar_configuracao(config *configure, char *linha) {
 		} else if(strcmp(H_MIN, atributo) == 0) {
 			configure->atributos[pegar_atributo(prefixo, H_MIN)].h_min = pegar_valor(valor);
 		}
+
 		if(strcmp(S_MAX, atributo) == 0) {
 			configure->atributos[pegar_atributo(prefixo, S_MAX)].s_max = pegar_valor(valor);
 		} else if(strcmp(S_MIN, atributo) == 0) {
 			configure->atributos[pegar_atributo(prefixo, S_MIN)].s_min = pegar_valor(valor);
 		}
+
 		if(strcmp(V_MAX, atributo) == 0) {
 			configure->atributos[pegar_atributo(prefixo, V_MAX)].v_max = pegar_valor(valor);
 		} else if(strcmp(V_MIN, atributo) == 0) {

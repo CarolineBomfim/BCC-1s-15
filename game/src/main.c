@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
 	char aux[ESPACO_MEMORIA];
 	int trying = 0;
 
-	global->camera1 = camera_inicializa(0);
+	global->camera1 = camera_inicializa(configuracao->cam);
 
 	sprintf(aux, "Camera: Altura= %d\n\t\t\tLargura= %d", 
 	        global->camera1->altura, global->camera1->largura);
