@@ -1,6 +1,4 @@
-main
+*.DS_Store
 *.o
-.DS_Store
 *.log
-./tmp
 AirDrums
