@@ -20,7 +20,6 @@ int initialMenu(int trying, global_var *global)  {
 	int altura = global->configure->altura/4;
 
 	int mouse_y = 0;
-	int mouse_x = 0;
 	// background do menu
 	image menuBackground = newImage(al_load_bitmap("res/img/background_menu.png"));
 
@@ -44,7 +43,7 @@ int initialMenu(int trying, global_var *global)  {
 			// Eventos de movimento
 			if(event.type == ALLEGRO_EVENT_MOUSE_AXES) {
 				mouse_y = event.mouse.y;
-				mouse_x = event.mouse.x;
+		
 					// Start game
 				if(mouse_y > getPositiony(start_game) && mouse_y < getPositiony(ranking)) {
 					setPositiony(selection, altura*1);
@@ -59,6 +58,9 @@ int initialMenu(int trying, global_var *global)  {
 			} else if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
 					//Start game
 				if(mouse_y > getPositiony(start_game) && mouse_y < getPositiony(ranking)) {
+					global->music = "res/song/bang-your-head.ogg";
+					global->music_name = "Bang Your Head";
+					global->music_band = "Quiet Riot";
 					return 0;
 					// Ranking
 				} else if(mouse_y > getPositiony(ranking) && mouse_y < getPositiony(exit_game)) {

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "global.h"
 
@@ -72,6 +73,16 @@ void conversionHSV(unsigned char *rgb, int *hsv) {
 	hsv[LIGHTNESS] = (int)v;
 }
 
+bool aproximateImage(unsigned char *a, unsigned char *b) {
+	bool ret = TRUE;
+	if(a[RED] != b[RED])
+		ret = FALSE;
+	else if(a[GREEN] != b[GREEN])
+		ret = FALSE;
+	else if(a[BLUE] != b[BLUE])
+		ret = FALSE;
+	return ret;
+}
 void track(global_var *global, int **positions) {
 	atributos *attr = global->configure->atributos;
 	int complemento = 0;
@@ -83,41 +94,63 @@ void track(global_var *global, int **positions) {
 		marks[i][1] = 0;
 	}
 	int altura = global->configure->altura;
-	int largura = global->configure->largura;
+	// Pegando a parte esquerda da imagem
+	int largura = global->configure->largura - 100;
 	int ***hsv = malloc(altura*sizeof(int**));
 	
 	camera_atualiza(global->camera1);
-	
-	for(int i = altura/2; i < altura; i++) {
+	// Pega a parte inferior da imagem
+	for(int i = 100; i < altura; i++) {
 		hsv[i] = malloc(largura*sizeof(int*));
-		for(int j = largura/2; j < largura; j++) {
+		for(int j = 0; j < largura; j++) {
 			hsv[i][j] = malloc(3*sizeof(int));
-			conversionHSV(global->camera1->quadro[i][j], hsv[i][j]);
-			
-			for(int k = 0; k < global->configure->num_obj; k++) {
-				// Aprimorar valores para o ambiente adequado
-				// printf("(%d) %d %d %d %d %d %d\n", k,
-				// 			attr[k].h_min < hsv[i][j][HUE],
-				// 			hsv[i][j][HUE] < attr[k].h_max,
-				// 			attr[k].s_min < hsv[i][j][SATURATION],
-				// 			hsv[i][j][SATURATION] < attr[k].s_max,
-				// 			attr[k].v_min < hsv[i][j][LIGHTNESS], 
-				// 			hsv[i][j][LIGHTNESS] < attr[k].v_max );
-				if(
-				   attr[k].h_min < hsv[i][j][HUE]
-				   && hsv[i][j][HUE] < attr[k].h_max
-				   && attr[k].s_min < hsv[i][j][SATURATION]
-				   && hsv[i][j][SATURATION] < attr[k].s_max
-				   && attr[k].v_min < hsv[i][j][LIGHTNESS] 
-				   && hsv[i][j][LIGHTNESS] < attr[k].v_max
-				  ) {
-					
-						// Pegando a centroide de cada um dos pontos
-						marks[k][POSITION_X] += j;
-						marks[k][POSITION_Y] += i;
-						complemento++;
-					
+			if (!aproximateImage(global->snapshot[i][j], global->camera1->quadro[i][j])) {
+				conversionHSV(global->camera1->quadro[i][j], hsv[i][j]);
+				for(int k = 0; k < global->configure->num_obj; k++) {
+					// Aprimorar valores para o ambiente
+					if(global->gameMode == NORMAL_MODE || global->gameMode == TESTING_MODE) {
+							// Pegando a centroide de cada um dos pontos
+						if(attr[k].h_min <= hsv[i][j][HUE]
+						   && hsv[i][j][HUE] <= attr[k].h_max
+						   && attr[k].s_min <= hsv[i][j][SATURATION]
+						   && hsv[i][j][SATURATION] <= attr[k].s_max
+						   && attr[k].v_min <= hsv[i][j][LIGHTNESS] 
+						   && hsv[i][j][LIGHTNESS] <= attr[k].v_max ) {
+	   						marks[k][POSITION_X] += j;
+	   						marks[k][POSITION_Y] += i;
+	   						complemento++;
+	   					}
+					} else {
+						if (global->gameMode == DEBUG_MODE) {
+							if(i == altura/2 && j == largura/2)
+								printf("%d\t%d\t%d\n",hsv[i][j][HUE], hsv[i][j][SATURATION], hsv[i][j][LIGHTNESS]);
+
+							if(attr[k].h_min <= hsv[i][j][HUE]
+								 && attr[k].s_min <= hsv[i][j][SATURATION]
+								 && attr[k].v_min <= hsv[i][j][LIGHTNESS]
+								 && hsv[i][j][HUE] <= attr[k].h_max
+								 && hsv[i][j][SATURATION] <= attr[k].s_max
+								 && hsv[i][j][LIGHTNESS] <= attr[k].v_max
+								) {
+								printf("(%d)\t%d\t%d\t%d\t<\t%d\t%d\t%d\t<\t%d\t%d\t%d\n", 
+								       k+1, attr[k].h_min, attr[k].s_min, attr[k].v_min, 
+								       hsv[i][j][HUE], hsv[i][j][SATURATION], hsv[i][j][LIGHTNESS],
+								       attr[k].h_max, attr[k].s_max, attr[k].v_max);
+								marks[k][POSITION_X] += j;
+								marks[k][POSITION_Y] += i;
+								complemento++;
+							}
+						}
+					}
 				}
+				hsv[i][j][HUE] = 0;
+				hsv[i][j][SATURATION] = 0;
+				hsv[i][j][LIGHTNESS] = 0;
+			} else {
+				// Para visualizar o que está sendo detectado
+				global->camera1->quadro[i][j][RED] = 0;
+				global->camera1->quadro[i][j][GREEN] = 0;
+				global->camera1->quadro[i][j][BLUE] = 0;
 			}
 			free(hsv[i][j]);
 		}
@@ -130,4 +163,35 @@ void track(global_var *global, int **positions) {
 		free(marks[i]);
 	}
 	free(marks);
+}
+
+unsigned char ***getSnapshot(global_var *global) {
+	int altura = global->configure->altura;
+	int largura = global->configure->largura;
+	unsigned char ***snapshot = malloc(altura*sizeof(unsigned char **));
+	for (int i = 0; i < altura; i++) {
+		snapshot[i] = malloc(largura*sizeof(unsigned char *));
+		for (int j = 0; j < largura; j++) {
+			snapshot[i][j] = malloc(3*sizeof(unsigned char));
+			for(int k = 0; k < 3; k++) {
+				snapshot[i][j][k] = global->camera1->quadro[i][j][k];
+			}
+		}
+	}
+	return snapshot;
+}
+
+void freeSnapshot(unsigned char ***snapshot) {
+	int i = 0;
+	int j = 0;
+	while (snapshot[i] != NULL) {
+		j = 0;
+		while (snapshot[i][j] != NULL){
+			free(snapshot[i][j]);
+			j++;
+		}
+		free(snapshot[i]);
+		i++;
+	}
+	free(snapshot);
 }

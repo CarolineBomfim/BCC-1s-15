@@ -10,8 +10,9 @@ typedef struct _global_var {
 	config *configure;
 	rank *ranking;
 	camera *camera1;
-	char *gamer;
+	char *gamer, *music, *music_notes, *music_name, *music_band;
 	int gameMode;
+	unsigned char ***snapshot;
 } global_var;
 
 #define TRUE 1

@@ -2,6 +2,5 @@
 #define _MAIN_GAME_H_
 	
 	int startGame(global_var *global);
-	void showExemple();
 	
 #endif

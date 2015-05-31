@@ -34,13 +34,20 @@
 
 // Salva o valor no arquivo de histórico para registros.
 void registra_configuracao(config *configuracao) {
-	char detalhesConfiguracao[ESPACO_MEMORIA];
-	char elementosRastreados[2][ESPACO_MEMORIA];
-	char textoAuxiliar[10*ESPACO_MEMORIA];
+	char *detalhesConfiguracao = malloc(ESPACO_MEMORIA*sizeof(char));
+	char *textoAuxiliar = malloc((10*ESPACO_MEMORIA)*sizeof(char));
+	char *registro = malloc((10*ESPACO_MEMORIA)*sizeof(char));
+	char **elementosRastreados = malloc(2*sizeof(char *));
+	for (int i = 0; i < 2; i++) {
+		elementosRastreados[i] = malloc(ESPACO_MEMORIA*sizeof(char));
+		for (int j = 0; j < ESPACO_MEMORIA; ++j) {
+			elementosRastreados[i][j] = ' ';
+		}
+	}
 	int count = 0;
-	char registro[10*ESPACO_MEMORIA];
 
-	sprintf(detalhesConfiguracao, "\nCamera\nLargura: %d\nAltura: %d\nNumero de objetos rastreado: %d\nFPS: %lf\n",
+	sprintf(detalhesConfiguracao, 
+	        "\n\n\n<=========>\n\nCamera %d\nLargura: %d\nAltura: %d\nNumero de objetos rastreado: %d\nFPS: %lf\n",
 	        configuracao->cam, configuracao->largura, configuracao->altura, configuracao->num_obj, configuracao->fps);
 	
 	while(count < configuracao->num_obj) {
@@ -67,7 +74,13 @@ void registra_configuracao(config *configuracao) {
 	}
 	
 	sprintf(registro, "\n%s%s\n", detalhesConfiguracao, textoAuxiliar);
-	
+	for (int i = 0; i < 2; i++) {
+		free(elementosRastreados[i]);
+	}
+	free(elementosRastreados);
+	free(detalhesConfiguracao);
+	free(registro);
+	free(textoAuxiliar);
 	logger(registro);
 }
 
@@ -146,14 +159,17 @@ config *ler_arquivo_configuracao(char *arquivo) {
 	config *configure = malloc(sizeof(config));
 	FILE *arquivo_carregado;
 	char *linha = malloc(ESPACO_MEMORIA*sizeof(char));
-	char *nova_linha[ESPACO_MEMORIA];
+	char *nova_linha = malloc(ESPACO_MEMORIA*sizeof(char));
 
 	arquivo_carregado = fopen( arquivo, "r");
 	
 	if(!arquivo_carregado) {
 		erro("Falha ao carregar arquivo de configuracao");
 	}
-
+	for(int i = 0; i < ESPACO_MEMORIA; i++) {
+		linha[i] = ' ';
+		nova_linha[i] = ' ';
+	}
 	while(fgets(linha, ESPACO_MEMORIA, arquivo_carregado) != NULL) {
 		if( linha[0] != '#' ) {
 			montar_configuracao(configure, memcpy( nova_linha, linha, strlen(linha) - 1));
@@ -162,6 +178,7 @@ config *ler_arquivo_configuracao(char *arquivo) {
 		}
 	}
 	free(linha);
+	free(nova_linha);
 	fclose(arquivo_carregado);
 	registra_configuracao(configure);
 	return configure;

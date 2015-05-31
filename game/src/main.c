@@ -4,7 +4,9 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
-
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_primitives.h>
 #include "global.h"
 #include "gameMain.h"
 #include "ranking.h"
@@ -18,6 +20,10 @@ void gameExit(global_var *global);
 int main(int argc, char **argv) {
 	al_init();
 
+	al_init_font_addon();
+	if(!al_init_ttf_addon()) {
+		erro("Falha ao carregar biblioteca de fontes.");
+	}
 	if(!al_init_image_addon()) {
 		erro("Falha ao carregar biblioteca de images.");
 	}
@@ -74,6 +80,17 @@ int main(int argc, char **argv) {
 		global->gameMode = NORMAL_MODE;
 	}
 
+	if(global->gameMode != NORMAL_MODE) {
+		for(int i = 0; i < global->configure->num_obj; i++) {
+			printf("(%d) MAX: %d\t%d\t%d\n    MIN: %d\t%d\t%d\n", i,
+			global->configure->atributos[i].h_max,
+			global->configure->atributos[i].s_max,
+			global->configure->atributos[i].v_max,
+			global->configure->atributos[i].h_min,
+			global->configure->atributos[i].s_min,
+			global->configure->atributos[i].v_min);
+		}
+	}
 	if(!global->display) {
 		erro("Falha ao criar arquivo display");
 	}
