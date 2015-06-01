@@ -12,22 +12,23 @@ typedef struct _global_var {
 	camera *camera1;
 	char *gamer, *music, *music_notes, *music_name, *music_band;
 	int gameMode;
-	unsigned char ***snapshot;
+	unsigned char ***snapshot, ***hsv;
 } global_var;
 
 #define TRUE 1
 #define FALSE 0
-
+// Tipos de abertura do jogo
 #define NORMAL_MODE 0
 #define TESTING_MODE 1
 #define DEBUG_MODE 2
-
+// Arquivos fixos
 #define ARQUIVO_CONFIG "config/configuracao.conf"
 #define RANKING_FILE "res/ranking.txt"
 
 #define CURSOR_ESQUERDO 0
 #define CURSOR_DIREITO 1
 
+// Posição do cursor 
 #define POSITION_X 0
 #define POSITION_Y 1
 
@@ -41,4 +42,20 @@ typedef struct _global_var {
 #define SATURATION 1
 #define LIGHTNESS  2
 
+
+//Area de rastreio
+#define INICIO_X 0
+#define INICIO_Y 100
+#define FIM_X 400
+#define FIM_Y 480
+
+//Diametro dos alvos
+#define TARGET_HEIGHT 95
+#define TARGET_WIDTH 95 
+
+// Bloco dos alvos.
+#define INICIO_AREA_ALVO_Y 360
+#define FIM_AREA_ALVO_Y 455
+#define INICIO_AREA_ALVO_X 15
+#define FIM_AREA_ALVO_X 395
 #endif

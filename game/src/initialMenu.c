@@ -12,8 +12,10 @@ int initialMenu(int trying, global_var *global)  {
 		erro("Falha ao habilitar o cursor padrão do sistema.");
 	}
 
-	// Prepara fila de eventos para receber eventos do mouse.
+	// Prepara fila de eventos para receber eventos do mouse e da tela, para caso o tente usuário feche o jogo encerrar.
 	al_register_event_source(global->event_queue, al_get_mouse_event_source());
+	al_register_event_source(global->event_queue, al_get_display_event_source(global->display));
+
 
 	int largura = global->configure->largura;
 	// Dividindo a altura da tela em 4 blocos, a largura será a largura da tela inteira.
@@ -39,7 +41,9 @@ int initialMenu(int trying, global_var *global)  {
 
 			ALLEGRO_EVENT event;
 			al_wait_for_event(global->event_queue, &event);
-
+			if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+				return -1;
+			}
 			// Eventos de movimento
 			if(event.type == ALLEGRO_EVENT_MOUSE_AXES) {
 				mouse_y = event.mouse.y;

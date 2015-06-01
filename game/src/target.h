@@ -4,7 +4,7 @@
 
 typedef struct _target {
 	image imagem;
-	bool show;
+	int *show;
 }target;
 
 target newTarget(ALLEGRO_BITMAP *img);
@@ -15,5 +15,7 @@ int getPositionTargety(target this);
 void setPositionTargety(target this, int y);
 void setPositionTarget(target this, int x, int y);
 void drawTargets(target t1, target t2, target t3, target t4);
-
+void cascateTargets(global_var *global, target t1, target t2, target t3, target t4);
+void showTarget(target this);
+void hideTarget(target this);
 #endif

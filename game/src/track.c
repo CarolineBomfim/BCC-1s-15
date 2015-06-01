@@ -42,7 +42,7 @@ double caculateMim(double a, double b, double c) {
 	}
 }
 
-void conversionHSV(unsigned char *rgb, int *hsv) {
+void conversionHSV(unsigned char *rgb, unsigned char *hsv) {
 	double r = (rgb[RED]*100)/255;
 	double g = (rgb[GREEN]*100)/255;
 	double b = (rgb[BLUE]*100)/255;
@@ -94,28 +94,24 @@ void track(global_var *global, int **positions) {
 		marks[i][1] = 0;
 	}
 	int altura = global->configure->altura;
-	// Pegando a parte esquerda da imagem
 	int largura = global->configure->largura - 100;
-	int ***hsv = malloc(altura*sizeof(int**));
-	
+
 	camera_atualiza(global->camera1);
 	// Pega a parte inferior da imagem
-	for(int i = 100; i < altura; i++) {
-		hsv[i] = malloc(largura*sizeof(int*));
-		for(int j = 0; j < largura; j++) {
-			hsv[i][j] = malloc(3*sizeof(int));
+	for(int i = INICIO_Y; i < FIM_Y; i++) {
+		for(int j = INICIO_X; j < FIM_X; j++) {
 			if (!aproximateImage(global->snapshot[i][j], global->camera1->quadro[i][j])) {
-				conversionHSV(global->camera1->quadro[i][j], hsv[i][j]);
+				conversionHSV(global->camera1->quadro[i][j], global->hsv[i][j]);
 				for(int k = 0; k < global->configure->num_obj; k++) {
 					// Aprimorar valores para o ambiente
 					if(global->gameMode == NORMAL_MODE || global->gameMode == TESTING_MODE) {
 							// Pegando a centroide de cada um dos pontos
-						if(attr[k].h_min <= hsv[i][j][HUE]
-						   && hsv[i][j][HUE] <= attr[k].h_max
-						   && attr[k].s_min <= hsv[i][j][SATURATION]
-						   && hsv[i][j][SATURATION] <= attr[k].s_max
-						   && attr[k].v_min <= hsv[i][j][LIGHTNESS] 
-						   && hsv[i][j][LIGHTNESS] <= attr[k].v_max ) {
+						if(attr[k].h_min <= global->hsv[i][j][HUE]
+						   && global->hsv[i][j][HUE] <= attr[k].h_max
+						   && attr[k].s_min <= global->hsv[i][j][SATURATION]
+						   && global->hsv[i][j][SATURATION] <= attr[k].s_max
+						   && attr[k].v_min <= global->hsv[i][j][LIGHTNESS] 
+						   && global->hsv[i][j][LIGHTNESS] <= attr[k].v_max ) {
 	   						marks[k][POSITION_X] += j;
 	   						marks[k][POSITION_Y] += i;
 	   						complemento++;
@@ -123,18 +119,18 @@ void track(global_var *global, int **positions) {
 					} else {
 						if (global->gameMode == DEBUG_MODE) {
 							if(i == altura/2 && j == largura/2)
-								printf("%d\t%d\t%d\n",hsv[i][j][HUE], hsv[i][j][SATURATION], hsv[i][j][LIGHTNESS]);
+								printf("%d\t%d\t%d\n",global->hsv[i][j][HUE], global->hsv[i][j][SATURATION], global->hsv[i][j][LIGHTNESS]);
 
-							if(attr[k].h_min <= hsv[i][j][HUE]
-								 && attr[k].s_min <= hsv[i][j][SATURATION]
-								 && attr[k].v_min <= hsv[i][j][LIGHTNESS]
-								 && hsv[i][j][HUE] <= attr[k].h_max
-								 && hsv[i][j][SATURATION] <= attr[k].s_max
-								 && hsv[i][j][LIGHTNESS] <= attr[k].v_max
+							if(attr[k].h_min <= global->hsv[i][j][HUE]
+								 && attr[k].s_min <= global->hsv[i][j][SATURATION]
+								 && attr[k].v_min <= global->hsv[i][j][LIGHTNESS]
+								 && global->hsv[i][j][HUE] <= attr[k].h_max
+								 && global->hsv[i][j][SATURATION] <= attr[k].s_max
+								 && global->hsv[i][j][LIGHTNESS] <= attr[k].v_max
 								) {
 								printf("(%d)\t%d\t%d\t%d\t<\t%d\t%d\t%d\t<\t%d\t%d\t%d\n", 
 								       k+1, attr[k].h_min, attr[k].s_min, attr[k].v_min, 
-								       hsv[i][j][HUE], hsv[i][j][SATURATION], hsv[i][j][LIGHTNESS],
+								       global->hsv[i][j][HUE], global->hsv[i][j][SATURATION], global->hsv[i][j][LIGHTNESS],
 								       attr[k].h_max, attr[k].s_max, attr[k].v_max);
 								marks[k][POSITION_X] += j;
 								marks[k][POSITION_Y] += i;
@@ -143,20 +139,17 @@ void track(global_var *global, int **positions) {
 						}
 					}
 				}
-				hsv[i][j][HUE] = 0;
-				hsv[i][j][SATURATION] = 0;
-				hsv[i][j][LIGHTNESS] = 0;
+				global->hsv[i][j][HUE] = 0;
+				global->hsv[i][j][SATURATION] = 0;
+				global->hsv[i][j][LIGHTNESS] = 0;
 			} else {
 				// Para visualizar o que está sendo detectado
 				global->camera1->quadro[i][j][RED] = 0;
 				global->camera1->quadro[i][j][GREEN] = 0;
 				global->camera1->quadro[i][j][BLUE] = 0;
 			}
-			free(hsv[i][j]);
 		}
-		free(hsv[i]);
 	}
-	free(hsv);
 	for (int i = 0; i < global->configure->num_obj; ++i) {
 		positions[i][POSITION_X] = complemento > 0 ? marks[i][POSITION_X]/complemento : 0;
 		positions[i][POSITION_Y] = complemento > 0 ? marks[i][POSITION_Y]/complemento : 0;

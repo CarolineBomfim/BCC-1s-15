@@ -47,6 +47,7 @@ int main(int argc, char **argv) {
 	global_var *global = malloc(sizeof(global_var));
 
 	char aux[ESPACO_MEMORIA];
+	int turn = 0;
 	int trying = 0;
 
 	global->camera1 = camera_inicializa(configuracao->cam);
@@ -82,7 +83,7 @@ int main(int argc, char **argv) {
 
 	if(global->gameMode != NORMAL_MODE) {
 		for(int i = 0; i < global->configure->num_obj; i++) {
-			printf("(%d) MAX: %d\t%d\t%d\n    MIN: %d\t%d\t%d\n", i,
+			printf("(%d) MAX: %d\t%d\t%d\n    MIN: %d\t%d\t%d\n", i+1,
 			global->configure->atributos[i].h_max,
 			global->configure->atributos[i].s_max,
 			global->configure->atributos[i].v_max,
@@ -98,8 +99,12 @@ int main(int argc, char **argv) {
 	while(TRUE) {
 		switch (initialMenu(trying, global)) {
 			case 0:
-				trying += startGame(global);
-				fprintf(stderr, "Saiu.\n" );
+				turn = startGame(global);
+				if(turn == (-1)) {
+					gameExit(global);
+				} else {
+					trying += turn;
+				}
 				break;
 			case 1:
 				if(global->ranking) {

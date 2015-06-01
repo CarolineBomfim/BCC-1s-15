@@ -24,6 +24,9 @@
 // Camera que deve ser carregada
 #define CAM "CAM"
 
+// Velocidade da queda
+#define CASCATE_SPEED "CASCATE_SPEED"
+
 // Atributos dos objetos
 #define H_MAX "H_MAX_"
 #define H_MIN "H_MIN_"
@@ -115,6 +118,8 @@ void montar_configuracao(config *configure, char *linha) {
 	} else if(strcmp(prefixo, CASA_DECIMAL) == 0) {
 		configure->valor_decimal = pegar_valor(valor);
 
+	} else if(strcmp(prefixo, CASCATE_SPEED) == 0) {
+		configure->cascateSpeed = pegar_valor(valor);
 	} else if(strcmp(prefixo, FPS) == 0) {
 		configure->fps = pegar_valor(valor);
 
