@@ -174,17 +174,14 @@ unsigned char ***getSnapshot(global_var *global) {
 	return snapshot;
 }
 
-void freeSnapshot(unsigned char ***snapshot) {
-	int i = 0;
-	int j = 0;
-	while (snapshot[i] != NULL) {
-		j = 0;
-		while (snapshot[i][j] != NULL){
+void freeSnapshot(global_var *global, unsigned char ***snapshot) {
+	int altura = global->configure->altura;
+	int largura = global->configure->largura;
+	for (int i = 0; i < altura; i++) {
+		for (int j = 0; j < largura; j++) {
 			free(snapshot[i][j]);
-			j++;
 		}
 		free(snapshot[i]);
-		i++;
 	}
 	free(snapshot);
 }

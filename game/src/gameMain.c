@@ -187,6 +187,11 @@ int startGame(global_var *global) {
 			break;
 		}
 
+		// Encerra o laço até quando a música chega ao fim, solução temporaria
+		// 600 = tempoDaMusica*2
+		if(timerCounting == 600) {
+			break;
+		}
 		// Temporario até a resolução do leito do arquivo com as notas
 		if(timerCounting%5 == 0 ) {
 			srand((unsigned) time(&varTime));
@@ -319,7 +324,8 @@ int startGame(global_var *global) {
 		free(positions[i]);
 	}
 	free(positions);
-	freeSnapshot(global->snapshot);
+	freeSnapshot(global, global->snapshot);
+	freeSnapshot(global, global->hsv);
 	if(unespectedStop) {
 		return (-1);
 	}
