@@ -69,7 +69,7 @@ void conversionHSV(unsigned char *rgb, unsigned char *hsv) {
 	}
 
 	hsv[HUE] = (int)h;
-	hsv[SATURATION] = (int)s*100;
+	hsv[SATURATION] = (int)(s*100);
 	hsv[LIGHTNESS] = (int)v;
 }
 
