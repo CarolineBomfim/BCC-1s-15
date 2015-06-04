@@ -301,8 +301,14 @@ int startGame(global_var *global) {
 		// Desenha na tela tudo que é padrão para todos os modos de jogo
 
 		// Posição real do objeto detectado
-		al_draw_circle(positions[CURSOR_ESQUERDO][POSITION_X], positions[CURSOR_ESQUERDO][POSITION_Y], 30.0, blue, 2.0);
-		al_draw_circle(positions[CURSOR_DIREITO][POSITION_X], positions[CURSOR_DIREITO][POSITION_Y], 30.0, red, 2.0);
+		for (int k = 0; k < global->configure->num_obj; k++) {
+			if(k == CURSOR_ESQUERDO) {
+				al_draw_circle(positions[CURSOR_ESQUERDO][POSITION_X], positions[CURSOR_ESQUERDO][POSITION_Y], 30.0, blue, 2.0);
+			} else if(k == CURSOR_DIREITO) {
+				al_draw_circle(positions[CURSOR_DIREITO][POSITION_X], positions[CURSOR_DIREITO][POSITION_Y], 30.0, red, 2.0);
+			}
+		}
+
 		al_draw_line((double)INICIO_AREA_ALVO_X, (double)INICIO_AREA_ALVO_Y,(double)FIM_AREA_ALVO_X,(double)INICIO_AREA_ALVO_Y,white, 2);
 		al_draw_line((double)INICIO_AREA_ALVO_X, (double)FIM_AREA_ALVO_Y,(double)FIM_AREA_ALVO_X,(double)FIM_AREA_ALVO_Y,white, 2);
 

@@ -2,6 +2,13 @@
 #include <stdlib.h>
 #include "global.h"
 
+bool checking(atributos checked , unsigned char *current ) {
+	if (checked.h_min <= current[HUE] && current[HUE] <= checked.h_max
+		 && checked.s_min <= current[SATURATION] && current[SATURATION] <= checked.s_max
+		 && checked.v_min <= current[LIGHTNESS] && current[LIGHTNESS] <= checked.v_max)
+		return (bool) TRUE;
+	return (bool) FALSE;
+}
 double caculateMax(double a, double b, double c) {
 	if(a >= b) {
 		if(b >= c) {
@@ -85,7 +92,8 @@ bool aproximateImage(unsigned char *a, unsigned char *b) {
 }
 void track(global_var *global, int **positions) {
 	atributos *attr = global->configure->atributos;
-	int complemento = 0;
+	int complemento_dir = 0;
+	int complemento_esq = 0;
 	// Marcações 
 	int **marks = malloc(global->configure->num_obj*sizeof(int *));
 	for (int i = 0; i < global->configure->num_obj; ++i) {
@@ -105,36 +113,45 @@ void track(global_var *global, int **positions) {
 				for(int k = 0; k < global->configure->num_obj; k++) {
 					// Aprimorar valores para o ambiente
 					if(global->gameMode == NORMAL_MODE || global->gameMode == TESTING_MODE) {
-							// Pegando a centroide de cada um dos pontos
-						if(attr[k].h_min <= global->hsv[i][j][HUE]
-						   && global->hsv[i][j][HUE] <= attr[k].h_max
-						   && attr[k].s_min <= global->hsv[i][j][SATURATION]
-						   && global->hsv[i][j][SATURATION] <= attr[k].s_max
-						   && attr[k].v_min <= global->hsv[i][j][LIGHTNESS] 
-						   && global->hsv[i][j][LIGHTNESS] <= attr[k].v_max ) {
-	   						marks[k][POSITION_X] += j;
-	   						marks[k][POSITION_Y] += i;
-	   						complemento++;
-	   					}
+						// Pegando a centroide de cada um dos pontos
+
+						if(k == CURSOR_ESQUERDO) {
+							if( checking(attr[CURSOR_ESQUERDO], global->hsv[i][j]) ) {
+								marks[CURSOR_ESQUERDO][POSITION_X] += j;
+								marks[CURSOR_ESQUERDO][POSITION_Y] += i;
+								complemento_esq++;
+							}
+						} else if(k == CURSOR_DIREITO) {
+							if( checking(attr[CURSOR_DIREITO], global->hsv[i][j]) ) {
+								marks[CURSOR_DIREITO][POSITION_X] += j;
+								marks[CURSOR_DIREITO][POSITION_Y] += i;
+								complemento_dir++;
+							}
+						}
 					} else {
 						if (global->gameMode == DEBUG_MODE) {
 							if(i == altura/2 && j == largura/2)
 								printf("%d\t%d\t%d\n",global->hsv[i][j][HUE], global->hsv[i][j][SATURATION], global->hsv[i][j][LIGHTNESS]);
 
-							if(attr[k].h_min <= global->hsv[i][j][HUE]
-								 && attr[k].s_min <= global->hsv[i][j][SATURATION]
-								 && attr[k].v_min <= global->hsv[i][j][LIGHTNESS]
-								 && global->hsv[i][j][HUE] <= attr[k].h_max
-								 && global->hsv[i][j][SATURATION] <= attr[k].s_max
-								 && global->hsv[i][j][LIGHTNESS] <= attr[k].v_max
-								) {
+							if(checking(attr[k], global->hsv[i][j])) {
 								printf("(%d)\t%d\t%d\t%d\t<\t%d\t%d\t%d\t<\t%d\t%d\t%d\n", 
 								       k+1, attr[k].h_min, attr[k].s_min, attr[k].v_min, 
 								       global->hsv[i][j][HUE], global->hsv[i][j][SATURATION], global->hsv[i][j][LIGHTNESS],
 								       attr[k].h_max, attr[k].s_max, attr[k].v_max);
-								marks[k][POSITION_X] += j;
-								marks[k][POSITION_Y] += i;
-								complemento++;
+								
+								if(k == CURSOR_ESQUERDO) {
+									if( checking(attr[CURSOR_ESQUERDO], global->hsv[i][j]) ) {
+										marks[CURSOR_ESQUERDO][POSITION_X] += j;
+										marks[CURSOR_ESQUERDO][POSITION_Y] += i;
+										complemento_esq++;
+									}
+								} else if(k == CURSOR_DIREITO) {
+									if( checking(attr[CURSOR_DIREITO], global->hsv[i][j]) ) {
+										marks[CURSOR_DIREITO][POSITION_X] += j;
+										marks[CURSOR_DIREITO][POSITION_Y] += i;
+										complemento_dir++;
+									}
+								}
 							}
 						}
 					}
@@ -151,8 +168,13 @@ void track(global_var *global, int **positions) {
 		}
 	}
 	for (int i = 0; i < global->configure->num_obj; ++i) {
-		positions[i][POSITION_X] = complemento > 0 ? marks[i][POSITION_X]/complemento : 0;
-		positions[i][POSITION_Y] = complemento > 0 ? marks[i][POSITION_Y]/complemento : 0;
+		if(i == CURSOR_ESQUERDO) {
+			positions[CURSOR_ESQUERDO][POSITION_X] = complemento_esq > 0 ? marks[CURSOR_ESQUERDO][POSITION_X]/complemento_esq : 0;
+			positions[CURSOR_ESQUERDO][POSITION_Y] = complemento_esq > 0 ? marks[CURSOR_ESQUERDO][POSITION_Y]/complemento_esq : 0;	
+		} else if(i == CURSOR_DIREITO) {
+			positions[CURSOR_DIREITO][POSITION_X] = complemento_dir > 0 ? marks[i][POSITION_X]/complemento_dir : 0;
+			positions[CURSOR_DIREITO][POSITION_Y] = complemento_dir > 0 ? marks[i][POSITION_Y]/complemento_dir : 0;
+		}
 		free(marks[i]);
 	}
 	free(marks);
