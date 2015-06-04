@@ -9,6 +9,7 @@ bool checking(atributos checked , unsigned char *current ) {
 		return (bool) TRUE;
 	return (bool) FALSE;
 }
+
 double caculateMax(double a, double b, double c) {
 	if(a >= b) {
 		if(b >= c) {

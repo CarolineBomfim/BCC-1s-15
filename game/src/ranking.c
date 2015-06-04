@@ -16,7 +16,12 @@ void troca(rank *v, int i, int j) {
 
 int getSizeRank(rank *ranking) {
 	int i = 0;
-	while(ranking[i].record != NULL) {
+	bool _while = TRUE;
+	while(_while) {
+		if(!ranking[i].record) {
+			_while = FALSE;
+			break;
+		}
 		printf("=====;;;>>>%s", ranking[i].name);
 		i++;
 	}
