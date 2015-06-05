@@ -3,9 +3,9 @@
 
 typedef struct _music {
 	int nBlocos;
-	int ***music;
+	char ***music;
 }music;
 music alocaMusic(int total);
-music readFileMusic(char *file);
+music readFileMusic(global_var *global, char *file);
 void freeMusic(music musica);
 #endif

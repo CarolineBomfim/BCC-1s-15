@@ -118,7 +118,10 @@ int startGame(global_var *global) {
 	ALLEGRO_SAMPLE_INSTANCE *sample;
 	ALLEGRO_SAMPLE *sample_data= al_load_sample(global->music);
 	// Carregando musica e as notas
-	// music music_notes 					= readFileMusic(global->music_notes);
+	music music_notes 					= readFileMusic(global, global->music_notes);
+	if(!music_notes.nBlocos) {
+		erro("Erro ao carregar arquivo de notas.");
+	}
 	if(!sample_data) {
 		erro("Erro ao carregar musica.");
 	}

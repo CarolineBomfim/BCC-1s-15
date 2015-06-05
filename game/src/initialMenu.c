@@ -63,6 +63,7 @@ int initialMenu(int trying, global_var *global)  {
 					//Start game
 				if(mouse_y > getPositiony(start_game) && mouse_y < getPositiony(ranking)) {
 					global->music = "res/song/bang-your-head.ogg";
+					global->music_notes = "res/song/bang-your-head.notes";
 					global->music_name = "Bang Your Head";
 					global->music_band = "Quiet Riot";
 					return 0;

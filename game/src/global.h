@@ -17,13 +17,19 @@ typedef struct _global_var {
 
 #define TRUE 1
 #define FALSE 0
+
 // Tipos de abertura do jogo
 #define NORMAL_MODE 0
 #define TESTING_MODE 1
 #define DEBUG_MODE 2
+
 // Arquivos fixos
 #define ARQUIVO_CONFIG "config/configuracao.conf"
 #define RANKING_FILE "res/ranking.txt"
+
+// Configurações do arquivo de notas
+#define TAMANHO_LINHA 4
+#define TAMANHO_BLOCO 4
 
 #define CURSOR_ESQUERDO 0
 #define CURSOR_DIREITO 1
@@ -58,4 +64,6 @@ typedef struct _global_var {
 #define FIM_AREA_ALVO_Y 455
 #define INICIO_AREA_ALVO_X 15
 #define FIM_AREA_ALVO_X 395
+
+
 #endif
