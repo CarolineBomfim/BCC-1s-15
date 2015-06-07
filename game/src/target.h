@@ -10,6 +10,8 @@ typedef struct _target {
 target newTarget(ALLEGRO_BITMAP *img);
 void clearTarget(target this);
 void drawTarget(target this);
+void resetTargetPosition(target t);
+void resetTargetPositionForce(target t);
 int getPositionTargetx(target this);
 int getPositionTargety(target this);
 void setPositionTargety(target this, int y);
@@ -18,4 +20,7 @@ void drawTargets(target t1, target t2, target t3, target t4);
 void cascateTargets(global_var *global, target t1, target t2, target t3, target t4);
 void showTarget(target this);
 void hideTarget(target this);
+bool isShow(target this);
+bool targetInArea(target target);
+bool targetsInArea(target t1, target t2, target t3, target t4);
 #endif

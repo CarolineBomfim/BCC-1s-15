@@ -65,5 +65,6 @@ typedef struct _global_var {
 #define INICIO_AREA_ALVO_X 15
 #define FIM_AREA_ALVO_X 395
 
-
+// Passa para a proxima linha da matriz
+#define VELOCIDADE_PASSAGEM 15
 #endif

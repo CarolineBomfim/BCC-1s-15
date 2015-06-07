@@ -30,7 +30,7 @@ music readFileMusic(global_var *global, char *file) {
 	char *linha = malloc(TAMANHO_LINHA*sizeof(char));
 	
 	int musicSize = 0;
-	char *att = malloc(2*TAMANHO_BLOCO*sizeof(char));
+	
 	int bloco = 0, line = 0;
 	
 
@@ -44,7 +44,6 @@ music readFileMusic(global_var *global, char *file) {
 	musica = alocaMusic(musicSize);
 
 	int count = 0;
-	int _while = musicSize;
 	while(count < (musicSize-1)) {
 
 		fscanf(arquivo_carregado, "%s", linha);
@@ -65,20 +64,14 @@ music readFileMusic(global_var *global, char *file) {
 					musica.music[bloco][line][character] = linha[character];
 				}
 			}
-
-			if(global->gameMode == DEBUG_MODE) {
-				printf("\n(%d)\t%s\t %d\t%d\n", count, linha, line, bloco);
-				for(int character = 0; character < TAMANHO_LINHA; character++) {
-					printf("> %c\t", musica.music[bloco][line][character]);
-				}
-				printf("\n");
-			}
 			line++;
 		}
 
 		count++;
 	}
-
+	if(global->gameMode != NORMAL_MODE) {
+		printf("Blocks = %d\n", bloco);
+	}
 	free(linha);
 	fclose(arquivo_carregado);
 	return musica;

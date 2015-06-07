@@ -54,6 +54,8 @@ void liberaPosition(int *x) {
 void clearImage(image img) {
 	liberaPosition(img.positionx);
 	liberaPosition(img.positiony);
+	al_destroy_bitmap(img.image);
+	
 }
 
 image newImage(ALLEGRO_BITMAP *img) {

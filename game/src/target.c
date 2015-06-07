@@ -24,6 +24,18 @@ void drawTarget(target this) {
 	}
 }
 
+void resetTargetPosition(target t) {
+	if(getPositionTargety(t) > FIM_AREA_ALVO_Y) {
+		setPositionTargety(t, 0);
+		hideTarget(t);
+	}
+}
+
+void resetTargetPositionForce(target t) {
+	setPositionTargety(t, 0);
+	hideTarget(t);
+}
+
 int getPositionTargetx(target this) {
 	return getPositionx(this.imagem);
 }
@@ -53,14 +65,25 @@ void drawTargets(target t1, target t2, target t3, target t4) {
 }
 
 void cascateTargets(global_var *global, target t1, target t2, target t3, target t4) {
-	if(isShow(t1))
+	if(isShow(t1)) {
 		setPositionTargety(t1, getPositionTargety(t1) + global->configure->cascateSpeed);
-	if(isShow(t2))
+		resetTargetPosition(t1);
+	}
+
+	if(isShow(t2)) {
 		setPositionTargety(t2, getPositionTargety(t2) + global->configure->cascateSpeed);
-	if(isShow(t3))
+		resetTargetPosition(t2);
+	}
+	
+	if(isShow(t3)) {
 		setPositionTargety(t3, getPositionTargety(t3) + global->configure->cascateSpeed);
-	if(isShow(t4))
+		resetTargetPosition(t3);
+	}
+	
+	if(isShow(t4)) {
 		setPositionTargety(t4, getPositionTargety(t4) + global->configure->cascateSpeed);
+		resetTargetPosition(t4);
+	}
 }
 
 void showTarget(target this) {
@@ -72,3 +95,30 @@ void hideTarget(target this) {
 	if(this.show[0])
 		this.show[0] = FALSE;
 }
+
+bool targetInArea(target target) {
+	bool ret = FALSE;
+	if(getPositionTargetx(target) > INICIO_AREA_ALVO_X
+	   && getPositionTargetx(target) < FIM_AREA_ALVO_X) {
+		if(getPositionTargety(target) > INICIO_AREA_ALVO_Y
+		   && getPositionTargety(target) < FIM_AREA_ALVO_Y)
+			return TRUE;
+	}
+	return ret;
+}
+
+bool targetsInArea(target t1, target t2, target t3, target t4) {
+	if( targetInArea(t1)) {
+		return TRUE;
+	} else if(targetInArea(t2)) {
+		return TRUE;
+	} else if(targetInArea(t3)) {
+		return TRUE;
+	} else if(targetInArea(t4)) {
+		return TRUE;
+	} 
+	return FALSE;
+}
+
+
+

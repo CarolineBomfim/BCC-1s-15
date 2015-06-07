@@ -14,81 +14,52 @@
 #include "track.h"
 #include "musicGame.h"
 
-bool actionDetected(int **positions) {
-	int ret = FALSE;	
-	for(int i = 0; i < 2; i++ ) {
-		if(INICIO_AREA_ALVO_Y <= positions[i][POSITION_Y] 
-		   && positions[i][POSITION_Y] <= FIM_AREA_ALVO_Y) {
-			if(INICIO_AREA_ALVO_X <= positions[i][POSITION_X]
-			   && positions[i][POSITION_X] <= FIM_AREA_ALVO_X) {
-				return (bool)TRUE;
-			}
-		}
+bool successShot(int **positions, target target) {
+	bool ret = FALSE;
+	if(cursorInArea(positions) && targetInArea(target)) {
+		return TRUE;
 	}
-	return (bool)ret;
-}
-
-bool targetsInArea(target t1, target t2, target t3, target t4) {
-	if( INICIO_AREA_ALVO_Y < getPositionTargety(t1) && getPositionTargety(t1) < FIM_AREA_ALVO_Y) {
-		return (bool)TRUE;
-	} else if(INICIO_AREA_ALVO_Y < getPositionTargety(t2) && getPositionTargety(t2) < FIM_AREA_ALVO_Y) {
-		return (bool)TRUE;
-	} else if(INICIO_AREA_ALVO_Y < getPositionTargety(t3) && getPositionTargety(t3) < FIM_AREA_ALVO_Y) {
-		return (bool)TRUE;
-	} else if(INICIO_AREA_ALVO_Y < getPositionTargety(t4) && getPositionTargety(t4) < FIM_AREA_ALVO_Y) {
-		return (bool)TRUE;
-	} 
-	return (bool)FALSE;
-}
-
-int *getTargetInArea(target t1, target t2, target t3, target t4) {
-	int *targets = malloc(4*sizeof(int));
-	int aux = 0;
-	if( INICIO_AREA_ALVO_Y < getPositionTargety(t1) && getPositionTargety(t1) < FIM_AREA_ALVO_Y) {
-		targets[aux] = getPositionTargetx(t1);
-	}
-	if(INICIO_AREA_ALVO_Y < getPositionTargety(t2) && getPositionTargety(t2) < FIM_AREA_ALVO_Y) {
-		aux++;
-		targets[aux] = getPositionTargetx(t2);
-	}
-	if(INICIO_AREA_ALVO_Y < getPositionTargety(t3) && getPositionTargety(t3) < FIM_AREA_ALVO_Y) {
-		aux++;
-		targets[aux] = getPositionTargetx(t3);
-	}
-	if(INICIO_AREA_ALVO_Y < getPositionTargety(t4) && getPositionTargety(t4) < FIM_AREA_ALVO_Y) {
-		aux++;
-		targets[aux] = getPositionTargetx(t4);
-	}
-	return targets;
+	return ret;
 }
 
 int startGame(global_var *global) {
+	
 	bool unespectedStop = FALSE;
+	
 	logger("Iniciar jogo");
+	
 	camera_atualiza(global->camera1);
+
 	// Faz a checagem para verificar se o fundo é igual.
 	global->snapshot = getSnapshot(global);
+	
 	// Para evitar alocar e desalocar uma matriz o todo novo ciclo, utilizar uma unica matriz 
 	// e altarar os valores a cada novo ciclo
 	global->hsv = getSnapshot(global);
+	
 	if(!global->snapshot || !global->hsv) {
 		erro("Erro ao copiar o primeiro frame.");
 	}
 
 	// 0.5 segundo
-	ALLEGRO_TIMER *timer  = al_create_timer(0.5);
+	ALLEGRO_TIMER *timer  		= al_create_timer(0.5);
 
+	// 1 segund
+	ALLEGRO_TIMER *timerOfEvent = al_create_timer(1.0);
 
-	// Prepara fila de eventos 
+	// Fila de eventos local
+	ALLEGRO_EVENT_QUEUE *timerEventQueue = al_create_event_queue();
+
+	// Prepara filas de eventos 
 	al_register_event_source(global->event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(global->event_queue, al_get_display_event_source(global->display));
-
-
+	al_register_event_source(timerEventQueue, al_get_timer_event_source(timerOfEvent));
 
 	int **positions = malloc(global->configure->num_obj*sizeof(int *));
 	for (int i = 0; i < global->configure->num_obj; ++i) {
 		positions[i] = malloc(2*sizeof(int));
 	}
+
 	ALLEGRO_FONT *font				 = al_load_font("res/font/aardc.ttf", 36, 0);
 	if(!font) {
 		erro("Erro ao carregar fonte.");
@@ -96,9 +67,13 @@ int startGame(global_var *global) {
 
 	image background 					 = newImage(al_load_bitmap("res/img/background_image.png"));
 	target alvoAzul 					 = newTarget(al_load_bitmap("res/img/alvo_azul.png"));
+	target alvoAzul2 					 = newTarget(al_load_bitmap("res/img/alvo_azul.png"));
 	target alvoRosa 					 = newTarget(al_load_bitmap("res/img/alvo_rosa.png"));
+	target alvoRosa2 					 = newTarget(al_load_bitmap("res/img/alvo_rosa.png"));
 	target alvoVerde 					 = newTarget(al_load_bitmap("res/img/alvo_verde.png"));
+	target alvoVerde2 					 = newTarget(al_load_bitmap("res/img/alvo_verde.png"));
 	target alvoVermelho 			 = newTarget(al_load_bitmap("res/img/alvo_vermelho.png"));
+	target alvoVermelho2 			 = newTarget(al_load_bitmap("res/img/alvo_vermelho.png"));
 	target error1				 			 = newTarget(al_load_bitmap("res/img/errorImage.png"));
 	target error2				 			 = newTarget(al_load_bitmap("res/img/errorImage.png"));
 	target error3				 			 = newTarget(al_load_bitmap("res/img/errorImage.png"));
@@ -107,48 +82,51 @@ int startGame(global_var *global) {
 	ALLEGRO_BITMAP *preview		 = al_create_sub_bitmap(buffer, 0, 0, global->configure->largura, global->configure->altura);
 
 	// Colors
-	ALLEGRO_COLOR white = al_map_rgb(255,255,255);
-	ALLEGRO_COLOR black = al_map_rgb(0,0,0);
-	ALLEGRO_COLOR red = al_map_rgb(237,23,97);
-	ALLEGRO_COLOR green = al_map_rgb(10,212,153);
-	ALLEGRO_COLOR blue = al_map_rgb(55,47,223);
-	ALLEGRO_COLOR pink = al_map_rgb(228,65,220);
+	ALLEGRO_COLOR white 			= al_map_rgb(255,255,255);
+	ALLEGRO_COLOR black 			= al_map_rgb(0,0,0);
+	ALLEGRO_COLOR red 				= al_map_rgb(237,23,97);
+	ALLEGRO_COLOR green 			= al_map_rgb(10,212,153);
+	ALLEGRO_COLOR blue 				= al_map_rgb(55,47,223);
+	ALLEGRO_COLOR pink 				= al_map_rgb(228,65,220);
 
 	// Musica
 	ALLEGRO_SAMPLE_INSTANCE *sample;
-	ALLEGRO_SAMPLE *sample_data= al_load_sample(global->music);
+	ALLEGRO_SAMPLE *sample_data = al_load_sample(global->music);
 	// Carregando musica e as notas
 	music music_notes 					= readFileMusic(global, global->music_notes);
 	if(!music_notes.nBlocos) {
 		erro("Erro ao carregar arquivo de notas.");
 	}
+
 	if(!sample_data) {
 		erro("Erro ao carregar musica.");
 	}
+
 	sample = al_create_sample_instance(NULL);
 	if (!al_set_sample(sample, sample_data)) {
 		erro("Erro ao associar a musica a instancia.");
 	}
+
 	// Organizando posições do alvo, o diametro de cada alvo é de 95px
 	setPositionTarget(alvoAzul, INICIO_AREA_ALVO_X, 0);
+	setPositionTarget(alvoAzul2, INICIO_AREA_ALVO_X, 0);
 	setPositionTarget(alvoRosa, INICIO_AREA_ALVO_X + TARGET_WIDTH, 0);
+	setPositionTarget(alvoRosa2, INICIO_AREA_ALVO_X + TARGET_WIDTH, 0);
 	setPositionTarget(alvoVermelho, INICIO_AREA_ALVO_X + 2*TARGET_WIDTH, 0);
+	setPositionTarget(alvoVermelho2, INICIO_AREA_ALVO_X + 2*TARGET_WIDTH, 0);
 	setPositionTarget(alvoVerde, INICIO_AREA_ALVO_X + 3*TARGET_WIDTH, 0);
-
-	// Duplicando alvo para ele poder ser impresso duas vezes simultaneamete na tela
-	target alvoAzul2 = alvoAzul;
-	target alvoRosa2 = alvoRosa;
-	target alvoVerde2 = alvoVerde;
-	target alvoVermelho2 = alvoVermelho;
+	setPositionTarget(alvoVerde2, INICIO_AREA_ALVO_X + 3*TARGET_WIDTH, 0);
 
 	// Definindo propriedades das imagens de erro
 	setPositionTarget(error1, INICIO_AREA_ALVO_X, INICIO_AREA_ALVO_Y);
 	setPositionTarget(error2, INICIO_AREA_ALVO_X + TARGET_WIDTH, INICIO_AREA_ALVO_Y);
 	setPositionTarget(error3, INICIO_AREA_ALVO_X + 2*TARGET_WIDTH, INICIO_AREA_ALVO_Y);
 	setPositionTarget(error4, INICIO_AREA_ALVO_X + 3*TARGET_WIDTH, INICIO_AREA_ALVO_Y);
+
 	//Carregando cursores
 	cursor left = newCursor(al_load_bitmap("res/img/cursor_left.png"));
 	cursor right = newCursor(al_load_bitmap("res/img/cursor_right.png"));	
+	
 	// Os cursores devem ficar a baixo da linha que define a ação
 	setCursorPosition(right, global->configure->largura/2, global->configure->altura - 120);
 	setCursorPosition(left, global->configure->largura/2, global->configure->altura - 120);
@@ -163,19 +141,27 @@ int startGame(global_var *global) {
 
 	// Iniciando audio
 	al_set_sample_instance_playmode(sample, ALLEGRO_PLAYMODE_LOOP);
-	al_play_sample(sample_data, 1.0, 0.0,1.0,ALLEGRO_PLAYMODE_LOOP,NULL);
 
 	// Inicia o timer
 	al_start_timer(timer);
+	al_start_timer(timerOfEvent);
 
 	int timerCounting = 0;
-
-	// Para usar no rand 
-	time_t varTime;
-	unsigned randResult;
+	int block 				= 0;
+	int line 					= 0;
+	int count 				= 0;
+	int cascateaux 		= 0;
+	bool newBlock 		= TRUE;
+	logger("Inicando a musica");
 	while(TRUE){
-		ALLEGRO_EVENT event;
+		ALLEGRO_EVENT event, blockEvent;
+
+		al_wait_for_event(timerEventQueue, &blockEvent);
 		al_wait_for_event(global->event_queue, &event);
+
+		// Executa o rastreamento e retorna a posição dos objetos rastrados
+		track(global, positions);
+		setCursorsPosition(global, left, right, positions);
 
 		if(event.type == ALLEGRO_EVENT_TIMER) {
 			timerCounting++;
@@ -185,6 +171,7 @@ int startGame(global_var *global) {
 			hideTarget(error3);
 			hideTarget(error4);
 		}
+
 		if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
 			unespectedStop = TRUE;
 			break;
@@ -195,24 +182,65 @@ int startGame(global_var *global) {
 		if(timerCounting == 600) {
 			break;
 		}
-		// Temporario até a resolução do leito do arquivo com as notas
-		if(timerCounting%5 == 0 ) {
-			srand((unsigned) time(&varTime));
-			randResult = rand() % 40;
-			if((randResult % 4) == 0) {
-				showTarget(alvoAzul);
+
+		if(timerCounting == 16) {
+			al_play_sample(sample_data, 1.0, 0.0,1.0,ALLEGRO_PLAYMODE_LOOP,NULL);
+		}
+
+		// Notas a serem impressas na tela
+		if(blockEvent.type == ALLEGRO_EVENT_TIMER ){
+			if(newBlock) {
+				newBlock = FALSE;
+
+				if(global->gameMode == DEBUG_MODE) {
+					printf("(%d) (%d) (%s)\n", block, line, music_notes.music[block][line]);
+				}
+
+				for(int i = 0; i < TAMANHO_LINHA; i++) {
+					if(i == 0 && music_notes.music[block][line][0] == '1') {
+						if(isShow(alvoAzul)) {
+							showTarget(alvoAzul2);
+						} else {
+							showTarget(alvoAzul);
+						}
+					}
+
+					if(i == 1 && music_notes.music[block][line][1] == '1') {
+						if(isShow(alvoRosa)) {
+							showTarget(alvoRosa2);
+						} else {
+							showTarget(alvoRosa);
+						}
+					}
+
+					if(i == 2 && music_notes.music[block][line][2] == '1') {
+						if(isShow(alvoVermelho)) {
+							showTarget(alvoVermelho2);
+						} else {
+							showTarget(alvoVermelho);
+						}
+					}
+
+					if(i == 3 && music_notes.music[block][line][3] == '1') {
+						if(isShow(alvoVerde)) {
+							showTarget(alvoVerde2);
+						} else {
+							showTarget(alvoVerde);
+						}
+					}
+				}
+
+				// Passa o bloco  
+				line++;
+				if(line == 4) {
+					block++;
+					line = 0;
+				}
 			}
-			randResult = rand() % 40;
-			if((randResult % 4) == 0) {
-				showTarget(alvoRosa);
-			}
-			randResult = rand() % 40;
-			if((randResult % 4) == 0) {
-				showTarget(alvoVermelho);
-			}
-			randResult = rand() % 40;
-			if((randResult % 4) == 0) {
-				showTarget(alvoVerde);
+
+			if(cascateaux == VELOCIDADE_PASSAGEM) {
+				newBlock = TRUE;
+				cascateaux = 0 ;
 			}
 		}
 
@@ -221,10 +249,6 @@ int startGame(global_var *global) {
 		// gameMode=1 será executada como teste, então background que não será mostrada.
 		// gameMode=2 será executado como debug, mostrara mais informações no terminal
 		// como a valor que estiver dentro do range rastreado, não será.
-
-		// Executa o rastreamento e retorna a posição dos objetos rastrados
-		track(global, positions);
-		setCursorsPosition(global, left, right, positions);
 
 		// Imrpimindo elementos na tela
 		if(global->gameMode == NORMAL_MODE) {
@@ -242,59 +266,46 @@ int startGame(global_var *global) {
 		}
 
 		// Area relevante da detecção
-		if ( targetsInArea(alvoAzul, alvoRosa, alvoVermelho, alvoVerde)
-			|| targetsInArea(alvoAzul2, alvoRosa2, alvoVermelho2, alvoVerde2) ) {
-			// Current em int para verificar a posição dos alvos, como a posião em x é fixa não há problema
-			
-			int *current = getTargetInArea(alvoAzul, alvoRosa, alvoVermelho, alvoVerde);
-			if(actionDetected(positions)) {
-				int i = 0;
-				// Mostra o acerto para cada target individualmente
-				while(current[i]){
-					if(current[i] == getPositionTargetx(alvoAzul)
-					   || current[i] == getPositionTargetx(alvoAzul2)) {
-						al_draw_filled_circle((double)INICIO_AREA_ALVO_X, (double)INICIO_AREA_ALVO_Y, TARGET_WIDTH, blue);
+		if(timerCounting > 5) {
+			if ( targetsInArea(alvoAzul, alvoRosa, alvoVermelho, alvoVerde)
+			    || targetsInArea(alvoAzul2, alvoRosa2, alvoVermelho2, alvoVerde2)) {
+				
+				if(cursorInArea(positions)) {
+					if(successShot(positions, alvoAzul)) {
+						printf("successShot - alvoAzul\n");
+						resetTargetPositionForce(alvoAzul);
 					}
-
-					if(current[i] == getPositionTargetx(alvoRosa)
-	           || current[i] == getPositionTargetx(alvoRosa2)) {
-						al_draw_filled_circle((double)INICIO_AREA_ALVO_X + TARGET_WIDTH, (double)INICIO_AREA_ALVO_Y, TARGET_WIDTH, pink);
+					if(successShot(positions, alvoAzul2)) {
+						printf("successShot - alvoAzul2\n");
+						resetTargetPositionForce(alvoAzul2);
+					} 
+					if(successShot(positions, alvoRosa)) {
+						printf("successShot - alvoRosa\n");
+						resetTargetPositionForce(alvoRosa);
 					}
-					
-					if(current[i] == getPositionTargetx(alvoVermelho)
-	           || current[i] == getPositionTargetx(alvoVermelho2)) {
-						al_draw_filled_circle((double)INICIO_AREA_ALVO_X + 2*TARGET_WIDTH, (double)INICIO_AREA_ALVO_Y, TARGET_WIDTH, red);
+					if(successShot(positions, alvoRosa2)) {
+						printf("successShot - alvoRosa2\n");
+						resetTargetPositionForce(alvoRosa2);
 					}
-					
-					if (current[i] == getPositionTargetx(alvoVerde)
-	            || current[i] == getPositionTargetx(alvoVerde2)) {
-						al_draw_filled_circle((double)INICIO_AREA_ALVO_X + 3*TARGET_WIDTH, (double)INICIO_AREA_ALVO_Y, TARGET_WIDTH, green);
+					if(successShot(positions, alvoVerde)) {
+						printf("successShot - alvoVerde\n");
+						resetTargetPositionForce(alvoVerde);
 					}
-				}
-			} else {
-				int i = 0;
-				// Mostra o erro para cada target que esteja na zona ao mesmo tempo que os cursores não estão
-				while(current[i]) {
-					if(current[i] == getPositionTargetx(alvoAzul)
-					   || current[i] == getPositionTargetx(alvoAzul2)) {
-						showTarget(error1);
+					if(successShot(positions, alvoVerde2)) {
+						printf("successShot - alvoVerde2\n");
+						resetTargetPositionForce(alvoVerde2);
 					}
-					if(current[i] == getPositionTargetx(alvoRosa)
-	           || current[i] == getPositionTargetx(alvoRosa2)) {
-						showTarget(error2);
+					if(successShot(positions, alvoVermelho)){
+						printf("successShot - alvoVermelho\n");
+						resetTargetPositionForce(alvoVermelho);
 					}
-					if(current[i] == getPositionTargetx(alvoVermelho)
-	           || current[i] == getPositionTargetx(alvoVermelho2)) {
-						showTarget(error3);
+					if(successShot(positions, alvoVermelho2)) {
+						printf("successShot - alvoVermelho2\n");
+						resetTargetPositionForce(alvoVermelho2);
 					}
-					if (current[i] == getPositionTargetx(alvoVerde)
-	            || current[i] == getPositionTargetx(alvoVerde2)) {
-						showTarget(error4);
-					}
-					i++;
 				}
 			}
-			free(current);
+
 		}
 
 		// Efeito cascata dos alvos
@@ -324,17 +335,39 @@ int startGame(global_var *global) {
 		drawTargets(error1, error2, error3, error4);
 
 		// Cursor para mostrar em  qual alvo está o objeto
-		drawCursor(left);
-		drawCursor(right);
+		// drawCursor(left);
+		// drawCursor(right);
+		count++;
+		cascateaux++;
 		al_flip_display();
 	}
+
+	freeMusic(music_notes);
 	al_destroy_sample(sample_data);
 	for (int i = 0; i < global->configure->num_obj; ++i) {
 		free(positions[i]);
 	}
 	free(positions);
+	
 	freeSnapshot(global, global->snapshot);
 	freeSnapshot(global, global->hsv);
+	
+	clearImage(background);
+	clearTarget(alvoAzul);
+	clearTarget(alvoAzul2);
+	clearTarget(alvoRosa);
+	clearTarget(alvoRosa2);
+	clearTarget(alvoVerde);
+	clearTarget(alvoVerde2);
+	clearTarget(alvoVermelho);
+	clearTarget(alvoVermelho2);
+	clearTarget(error1);
+	clearTarget(error2);
+	clearTarget(error3);
+	clearTarget(error4);
+	clearCursor(left);
+	clearCursor(right);
+
 	if(unespectedStop) {
 		return (-1);
 	}
