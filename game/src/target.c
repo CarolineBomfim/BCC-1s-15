@@ -98,7 +98,7 @@ void hideTarget(target this) {
 
 bool targetInArea(target target) {
 	bool ret = FALSE;
-	if(getPositionTargetx(target) > INICIO_AREA_ALVO_X
+	if(getPositionTargetx(target) >= INICIO_AREA_ALVO_X
 	   && getPositionTargetx(target) < FIM_AREA_ALVO_X) {
 		if(getPositionTargety(target) > INICIO_AREA_ALVO_Y
 		   && getPositionTargety(target) < FIM_AREA_ALVO_Y)

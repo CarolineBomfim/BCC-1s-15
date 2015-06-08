@@ -7,7 +7,10 @@
 
 int initialMenu(int trying, global_var *global)  {
 	logger("Menu inicial.");
-	
+	if(global->gameMode != NORMAL_MODE) {
+		printf("Tentativas %d\n", trying);
+	}
+
 	if(!al_set_system_mouse_cursor(global->display, ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT)) {
 		erro("Falha ao habilitar o cursor padrão do sistema.");
 	}

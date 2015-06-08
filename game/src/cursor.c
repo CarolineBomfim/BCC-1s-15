@@ -46,10 +46,8 @@ bool cursorInArea(int **positions) {
 	bool ret = FALSE;
 	for(int i = 0; i < 2; i++) {
 		if(i == CURSOR_ESQUERDO || i == CURSOR_DIREITO) {
-			if(positions[i][POSITION_X] >= INICIO_AREA_ALVO_X 
-			   && positions[i][POSITION_X] <= FIM_AREA_ALVO_X ) {
-				if(positions[i][POSITION_Y] >= INICIO_AREA_ALVO_Y
-					 && positions[i][POSITION_Y] <= FIM_AREA_ALVO_Y ) {
+			if(positions[i][POSITION_X] > INICIO_AREA_ALVO_X && positions[i][POSITION_X] < FIM_AREA_ALVO_X ) {
+				if(positions[i][POSITION_Y] > INICIO_AREA_ALVO_Y && positions[i][POSITION_Y] < FIM_AREA_ALVO_Y ) {
 					return TRUE;
 				}
 			}
