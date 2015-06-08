@@ -11,7 +11,7 @@ typedef struct _atributos{
 }atributos;
 
 typedef struct _config {
-	int largura, altura, num_obj, limit_action, valor_decimal, cam, cascateSpeed;
+	int largura, altura, num_obj, limit_action, valor_decimal, cam, cascateSpeed, speedPass;
 	double fps;
 	atributos *atributos;
 }config;

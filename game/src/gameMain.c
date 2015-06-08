@@ -159,6 +159,7 @@ int startGame(global_var *global) {
 	int count 				= 0;
 	int cascateaux 		= 0;
 	bool newBlock 		= TRUE;
+	int trackaux 			= 0;
 	logger("Inicando a musica");
 	while(TRUE){
 		ALLEGRO_EVENT event, blockEvent;
@@ -167,8 +168,11 @@ int startGame(global_var *global) {
 		al_wait_for_event(global->event_queue, &event);
 
 		// Executa o rastreamento e retorna a posição dos objetos rastrados
-		track(global, positions);
-		setCursorsPosition(global, left, right, positions);
+		if(trackaux == 3) {
+			track(global, positions);
+			setCursorsPosition(global, left, right, positions);
+			trackaux = 0;
+		}
 
 		if(event.type == ALLEGRO_EVENT_TIMER) {
 			timerCounting++;
@@ -245,7 +249,7 @@ int startGame(global_var *global) {
 				}
 			}
 
-			if(cascateaux == VELOCIDADE_PASSAGEM) {
+			if(cascateaux == global->configure->speedPass) {
 				newBlock = TRUE;
 				cascateaux = 0 ;
 			}
@@ -428,6 +432,7 @@ int startGame(global_var *global) {
 		// drawCursor(right);
 		count++;
 		cascateaux++;
+		trackaux++;
 		al_flip_display();
 	}
 
