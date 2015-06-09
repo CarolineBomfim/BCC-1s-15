@@ -160,19 +160,20 @@ int startGame(global_var *global) {
 	int cascateaux 		= 0;
 	bool newBlock 		= TRUE;
 	int trackaux 			= 0;
+	int compareaux 		= 3;
 	logger("Inicando a musica");
 	while(TRUE){
+
 		ALLEGRO_EVENT event, blockEvent;
 
 		al_wait_for_event(timerEventQueue, &blockEvent);
 		al_wait_for_event(global->event_queue, &event);
 
 		// Executa o rastreamento e retorna a posição dos objetos rastrados
-		if(trackaux == 3) {
-			track(global, positions);
-			setCursorsPosition(global, left, right, positions);
-			trackaux = 0;
-		}
+		
+		track(global, positions);
+		setCursorsPosition(global, left, right, positions);
+		
 
 		if(event.type == ALLEGRO_EVENT_TIMER) {
 			timerCounting++;
@@ -199,62 +200,63 @@ int startGame(global_var *global) {
 		}
 
 		// Notas a serem impressas na tela
-		if(blockEvent.type == ALLEGRO_EVENT_TIMER ){
-			if(newBlock) {
-				newBlock = FALSE;
+		if(trackaux == compareaux) {
+			if(blockEvent.type == ALLEGRO_EVENT_TIMER ){
+				if(newBlock) {
+					newBlock = FALSE;
 
-				if(global->gameMode == DEBUG_MODE) {
-					printf("(%d) (%d) (%s)\n", block, line, music_notes.music[block][line]);
+					if(global->gameMode == DEBUG_MODE) {
+						printf("(%d) (%d) (%s)\n", block, line, music_notes.music[block][line]);
+					}
+
+					for(int i = 0; i < TAMANHO_LINHA; i++) {
+						if(i == 0 && music_notes.music[block][line][0] == '1') {
+							if(isShow(alvoAzul)) {
+								showTarget(alvoAzul2);
+							} else {
+								showTarget(alvoAzul);
+							}
+						}
+
+						if(i == 1 && music_notes.music[block][line][1] == '1') {
+							if(isShow(alvoRosa)) {
+								showTarget(alvoRosa2);
+							} else {
+								showTarget(alvoRosa);
+							}
+						}
+
+						if(i == 2 && music_notes.music[block][line][2] == '1') {
+							if(isShow(alvoVermelho)) {
+								showTarget(alvoVermelho2);
+							} else {
+								showTarget(alvoVermelho);
+							}
+						}
+
+						if(i == 3 && music_notes.music[block][line][3] == '1') {
+							if(isShow(alvoVerde)) {
+								showTarget(alvoVerde2);
+							} else {
+								showTarget(alvoVerde);
+							}
+						}
+					}
+
+					// Passa o bloco  
+					line++;
+					if(line == 4) {
+						block++;
+						line = 0;
+					}
 				}
 
-				for(int i = 0; i < TAMANHO_LINHA; i++) {
-					if(i == 0 && music_notes.music[block][line][0] == '1') {
-						if(isShow(alvoAzul)) {
-							showTarget(alvoAzul2);
-						} else {
-							showTarget(alvoAzul);
-						}
-					}
-
-					if(i == 1 && music_notes.music[block][line][1] == '1') {
-						if(isShow(alvoRosa)) {
-							showTarget(alvoRosa2);
-						} else {
-							showTarget(alvoRosa);
-						}
-					}
-
-					if(i == 2 && music_notes.music[block][line][2] == '1') {
-						if(isShow(alvoVermelho)) {
-							showTarget(alvoVermelho2);
-						} else {
-							showTarget(alvoVermelho);
-						}
-					}
-
-					if(i == 3 && music_notes.music[block][line][3] == '1') {
-						if(isShow(alvoVerde)) {
-							showTarget(alvoVerde2);
-						} else {
-							showTarget(alvoVerde);
-						}
-					}
+				if(cascateaux == global->configure->speedPass) {
+					newBlock = TRUE;
+					cascateaux = 0 ;
 				}
-
-				// Passa o bloco  
-				line++;
-				if(line == 4) {
-					block++;
-					line = 0;
-				}
-			}
-
-			if(cascateaux == global->configure->speedPass) {
-				newBlock = TRUE;
-				cascateaux = 0 ;
 			}
 		}
-
 		// gameMode representa como o jogo será executado
 		// gameMode=0 será executado de forma padrão, apenas com registros de rotina.
 		// gameMode=1 será executada como teste, então background que não será mostrada.
@@ -277,119 +279,121 @@ int startGame(global_var *global) {
 			al_draw_line((double)(INICIO_AREA_ALVO_X + 3*TARGET_WIDTH), 0,(double)(INICIO_AREA_ALVO_X + 3*TARGET_WIDTH),global->configure->altura,black, 1);
 		}
 
-		// Area relevante da detecção
-		if(timerCounting > 5) {
+		if(trackaux == compareaux){
+			// Area relevante da detecção
+			if(timerCounting > 5) {
 
-			if ( targetsInArea(alvoAzul, alvoRosa, alvoVermelho, alvoVerde)
-			    || targetsInArea(alvoAzul2, alvoRosa2, alvoVermelho2, alvoVerde2)) {
-				
-				if(cursorInArea(positions)) {
-					if(successShot(positions, alvoAzul)) {
-						al_draw_filled_circle((double)INICIO_AREA_ALVO_X, (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), blue);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("success shot blue\n");
+				if ( targetsInArea(alvoAzul, alvoRosa, alvoVermelho, alvoVerde)
+				    || targetsInArea(alvoAzul2, alvoRosa2, alvoVermelho2, alvoVerde2)) {
+					
+					if(cursorInArea(positions)) {
+						if(successShot(positions, alvoAzul)) {
+							al_draw_filled_circle((double)INICIO_AREA_ALVO_X, (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), blue);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("success shot blue\n");
+							}
+							resetTargetPositionForce(alvoAzul);
+						} else if(successShot(positions, alvoAzul2)) {
+							al_draw_filled_circle((double)INICIO_AREA_ALVO_X, (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), blue);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("success shot blue\n");
+							}
+							resetTargetPositionForce(alvoAzul2);
 						}
-						resetTargetPositionForce(alvoAzul);
-					} else if(successShot(positions, alvoAzul2)) {
-						al_draw_filled_circle((double)INICIO_AREA_ALVO_X, (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), blue);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("success shot blue\n");
-						}
-						resetTargetPositionForce(alvoAzul2);
-					}
 
-					if(successShot(positions, alvoRosa)) {
-						al_draw_filled_circle((double)((INICIO_AREA_ALVO_X+(TARGET_WIDTH/2)) + TARGET_WIDTH), (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), pink);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("success shot pink\n");
-						}
-						resetTargetPositionForce(alvoRosa);
-					} else if(successShot(positions, alvoRosa2)) {
-						al_draw_filled_circle((double)((INICIO_AREA_ALVO_X+(TARGET_WIDTH/2)) + TARGET_WIDTH), (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), pink);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("success shot pink\n");
-						}
-						resetTargetPositionForce(alvoRosa2);
-					} 
+						if(successShot(positions, alvoRosa)) {
+							al_draw_filled_circle((double)((INICIO_AREA_ALVO_X+(TARGET_WIDTH/2)) + TARGET_WIDTH), (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), pink);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("success shot pink\n");
+							}
+							resetTargetPositionForce(alvoRosa);
+						} else if(successShot(positions, alvoRosa2)) {
+							al_draw_filled_circle((double)((INICIO_AREA_ALVO_X+(TARGET_WIDTH/2)) + TARGET_WIDTH), (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), pink);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("success shot pink\n");
+							}
+							resetTargetPositionForce(alvoRosa2);
+						} 
 
-					if(successShot(positions, alvoVermelho)){
-						al_draw_filled_circle((double)((INICIO_AREA_ALVO_X+(TARGET_WIDTH/2)) + 2*TARGET_WIDTH), (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), red);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("success shot red\n");
-						}
-						resetTargetPositionForce(alvoVermelho);
-					} else if(successShot(positions, alvoVermelho2)) {
-						al_draw_filled_circle((double)((INICIO_AREA_ALVO_X+(TARGET_WIDTH/2)) + 2*TARGET_WIDTH), (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), red);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("success shot red\n");
-						}
-						resetTargetPositionForce(alvoVermelho2);
-					} 
+						if(successShot(positions, alvoVermelho)){
+							al_draw_filled_circle((double)((INICIO_AREA_ALVO_X+(TARGET_WIDTH/2)) + 2*TARGET_WIDTH), (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), red);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("success shot red\n");
+							}
+							resetTargetPositionForce(alvoVermelho);
+						} else if(successShot(positions, alvoVermelho2)) {
+							al_draw_filled_circle((double)((INICIO_AREA_ALVO_X+(TARGET_WIDTH/2)) + 2*TARGET_WIDTH), (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), red);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("success shot red\n");
+							}
+							resetTargetPositionForce(alvoVermelho2);
+						} 
 
-					if(successShot(positions, alvoVerde)) {
-						al_draw_filled_circle((double)((INICIO_AREA_ALVO_X+(TARGET_WIDTH/2)) + 3*TARGET_WIDTH), (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), green);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("success shot green\n");
+						if(successShot(positions, alvoVerde)) {
+							al_draw_filled_circle((double)((INICIO_AREA_ALVO_X+(TARGET_WIDTH/2)) + 3*TARGET_WIDTH), (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), green);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("success shot green\n");
+							}
+							resetTargetPositionForce(alvoVerde);
+						} else if(successShot(positions, alvoVerde2)) {
+							al_draw_filled_circle((double)((INICIO_AREA_ALVO_X+(TARGET_WIDTH/2)) + 3*TARGET_WIDTH), (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), green);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("success shot green\n");
+							}
+							resetTargetPositionForce(alvoVerde2);
+						} 
+					} else {
+						if(targetInArea(alvoAzul)) {
+							showTarget(error1);
+							resetTargetPositionForce(alvoAzul);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("show error error1\n");
+							}
+						} else if(targetInArea(alvoAzul2)) {
+							showTarget(error1);
+							resetTargetPositionForce(alvoAzul2);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("show error error1\n");
+							}
 						}
-						resetTargetPositionForce(alvoVerde);
-					} else if(successShot(positions, alvoVerde2)) {
-						al_draw_filled_circle((double)((INICIO_AREA_ALVO_X+(TARGET_WIDTH/2)) + 3*TARGET_WIDTH), (double)(INICIO_AREA_ALVO_Y+(TARGET_WIDTH/2)), (double)(TARGET_WIDTH/2), green);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("success shot green\n");
+						if(targetInArea(alvoRosa)) {
+							showTarget(error2);
+							resetTargetPositionForce(alvoRosa);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("show error error2\n");
+							}
+						} else if(targetInArea(alvoRosa2)) {
+							showTarget(error2);
+							resetTargetPositionForce(alvoRosa2);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("show error error2\n");
+							}
 						}
-						resetTargetPositionForce(alvoVerde2);
-					} 
-				} else {
-					if(targetInArea(alvoAzul)) {
-						showTarget(error1);
-						resetTargetPositionForce(alvoAzul);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("show error error1\n");
+						if(targetInArea(alvoVermelho)) {
+							showTarget(error3);
+							resetTargetPositionForce(alvoVermelho);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("show error error3\n");
+							}
+						} else if(targetInArea(alvoVermelho2)) {
+							showTarget(error3);
+							resetTargetPositionForce(alvoVermelho2);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("show error error3\n");
+							}
 						}
-					} else if(targetInArea(alvoAzul2)) {
-						showTarget(error1);
-						resetTargetPositionForce(alvoAzul2);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("show error error1\n");
-						}
-					}
-					if(targetInArea(alvoRosa)) {
-						showTarget(error2);
-						resetTargetPositionForce(alvoRosa);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("show error error2\n");
-						}
-					} else if(targetInArea(alvoRosa2)) {
-						showTarget(error2);
-						resetTargetPositionForce(alvoRosa2);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("show error error2\n");
-						}
-					}
-					if(targetInArea(alvoVermelho)) {
-						showTarget(error3);
-						resetTargetPositionForce(alvoVermelho);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("show error error3\n");
-						}
-					} else if(targetInArea(alvoVermelho2)) {
-						showTarget(error3);
-						resetTargetPositionForce(alvoVermelho2);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("show error error3\n");
-						}
-					}
-					if(targetInArea(alvoVerde)) {
-						showTarget(error4);
-						resetTargetPositionForce(alvoVerde);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("show error error4\n");
-						}
-					} else if(targetInArea(alvoVerde2)) {
-						showTarget(error4);
-						resetTargetPositionForce(alvoVerde2);
-						if(global->gameMode == DEBUG_MODE) {
-							printf("show error error4\n");
+						if(targetInArea(alvoVerde)) {
+							showTarget(error4);
+							resetTargetPositionForce(alvoVerde);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("show error error4\n");
+							}
+						} else if(targetInArea(alvoVerde2)) {
+							showTarget(error4);
+							resetTargetPositionForce(alvoVerde2);
+							if(global->gameMode == DEBUG_MODE) {
+								printf("show error error4\n");
+							}
 						}
 					}
 				}
@@ -430,6 +434,9 @@ int startGame(global_var *global) {
 		// Cursor para mostrar em  qual alvo está o objeto
 		// drawCursor(left);
 		// drawCursor(right);
+
+		if(trackaux == compareaux) 
+			trackaux = 0;
 		count++;
 		cascateaux++;
 		trackaux++;
