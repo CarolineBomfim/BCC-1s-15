@@ -22,7 +22,6 @@ int getSizeRank(rank *ranking) {
 			_while = FALSE;
 			break;
 		}
-		printf("=====;;;>>>%s", ranking[i].name);
 		i++;
 	}
 
@@ -106,12 +105,11 @@ rank *ler_ranking(char *caminho_arquivo) {
 	if(!arquivo) {
 		logger("Ranking vazio");
 	} else {
-		while(fgets(linha, ESPACO_MEMORIA, arquivo) != NULL && i < sizeFile) {
-			if(65 < (int)linha[0] && (int)linha[0] < 128){
-				ranking[i] = montar_ranking(memcpy( nova_linha, linha, strlen(linha) - 1));
-				i++;
-			}
-
+		// Tamanho maximo do ranking é 10
+		while(i < 10) {
+			fscanf(arquivo, "%s", linha);			
+			ranking[i] = montar_ranking(memcpy( nova_linha, linha, strlen(linha) - 1));
+			i++;
 			// memset está limpando o espaço de memoria para que não haja lixo entre uma linha a outra
 			memset(nova_linha, 0, ESPACO_MEMORIA);
 			memset(linha, 0, ESPACO_MEMORIA);

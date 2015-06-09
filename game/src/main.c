@@ -61,11 +61,7 @@ int main(int argc, char **argv) {
 
 	global->display = al_create_display(configuracao->largura, configuracao->altura);
 	global->event_queue = al_create_event_queue();
-	// global->ranking = ler_ranking(RANKING_FILE);
-	// while(global->ranking[trying].record != NULL) {
-	// 	printf("%s\n",global->ranking[trying].name);
-	// 	trying++;
-	// }
+
 	if(!global->event_queue) {
 		erro("Falha ao criar fila de eventos");
 	}
