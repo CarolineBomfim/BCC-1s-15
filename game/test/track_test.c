@@ -3,10 +3,10 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
-#include "../src/global.h"
-#include "../src/track.h"
-#include "../src/configure.h"
-#include "../src/logger.h"
+#include "src/camera.h"
+#include "src/global.h"
+#include "src/track.h"
+#include "src/logger.h"
 
 int main() {
   al_init();
@@ -19,8 +19,7 @@ int main() {
     erro("Falha ao carregar biblioteca de formas.");
   }
   printf("Arquivo de configuração\n");
-  char *arquivo = "../config/configuracao.conf";
-  config *configuracao        = ler_arquivo_configuracao(arquivo);
+  config *configuracao        = ler_arquivo_configuracao(ARQUIVO_CONFIG);
   global_var *global          = malloc(sizeof(global_var));
 
   printf("Criando janela\n");
@@ -31,6 +30,9 @@ int main() {
   printf("criando camera\n");
   global->camera1             = camera_inicializa(configuracao->cam);
   camera_atualiza(global->camera1);
+
+  //Associar arquivo de configuração a variavel global
+  global->configure = configuracao;
 
   printf("Criando fila de eventos\n");  
   global->event_queue         = al_create_event_queue();
@@ -76,11 +78,9 @@ int main() {
   }
   printf("while\n");
   while(1) {
+    camera_atualiza(global->camera1);
     camera_copia(global->camera1, global->camera1->quadro, preview);
     track(global, positions);
-    printf("Track\n");
-    // al_draw_bitmap(preview, 0, 0, 0);
-    // al_draw_bitmap(preview2, 2*global->configure->largura, 0, 0);
 
     // Posição real do objeto detectado
     for (int k = 0; k < global->configure->num_obj; k++) {
@@ -99,7 +99,7 @@ int main() {
       }
       al_draw_circle(positions[k][0], positions[k][1], 30.0, color, 2.0);
     }
-    printf("Colorize\n");
+    
     camera_copia(global->camera1, global->camera1->quadro, preview2);
     al_flip_display();
   }
